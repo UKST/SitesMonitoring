@@ -1,4 +1,7 @@
 using Autofac;
+using SitesMonitoring.BLL.Data;
+using SitesMonitoring.BLL.Endpoints;
+using SitesMonitoring.DAL;
 
 namespace SitesMonitoring.API
 {
@@ -6,6 +9,8 @@ namespace SitesMonitoring.API
     {
         protected override void Load(ContainerBuilder builder)
         {
+            builder.RegisterType<Handler>().As<IHandler>().InstancePerLifetimeScope();
+            builder.RegisterType<Repository>().As<IRepository>().InstancePerLifetimeScope();
         }
     }
 }

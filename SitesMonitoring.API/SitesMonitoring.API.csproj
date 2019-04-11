@@ -18,4 +18,9 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.0.2105168" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SitesMonitoring.BLL\SitesMonitoring.BLL.csproj" />
+    <ProjectReference Include="..\SitesMonitoring.DAL\SitesMonitoring.DAL.csproj" />
+  </ItemGroup>
+
 </Project>
