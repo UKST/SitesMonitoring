@@ -26,6 +26,8 @@ namespace SitesMonitoring.API
             // todo - add proper error handling
             
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddHostedService<TimedHostedService>();
             
             var mappingConfig = new MapperConfiguration(mc =>
             {
