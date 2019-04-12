@@ -6,9 +6,9 @@ namespace SitesMonitoring.BLL.Endpoints
 {
     public class Handler : IHandler
     {
-        private readonly IRepository _repository;
+        private readonly IRepository<string> _repository;
         
-        public Handler(IRepository repository)
+        public Handler(IRepository<string> repository)
         {
             _repository = repository;
         }
