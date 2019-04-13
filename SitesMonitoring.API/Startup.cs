@@ -2,11 +2,13 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SitesMonitoring.API.Authentication;
 using SitesMonitoring.API.Mapping;
 
 namespace SitesMonitoring.API
@@ -26,7 +28,10 @@ namespace SitesMonitoring.API
             // todo - add proper error handling
             
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
+            
+            services.AddAuthentication("BasicAuthentication")
+                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+            
             services.AddHostedService<TimedHostedService>();
             
             var mappingConfig = new MapperConfiguration(mc =>
@@ -57,6 +62,7 @@ namespace SitesMonitoring.API
             }
 
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseMvc();
         }
     }

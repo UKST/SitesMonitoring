@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SitesMonitoring.API.Mapping;
 using SitesMonitoring.API.Models.PingMonitoring;
@@ -12,6 +13,7 @@ namespace SitesMonitoring.API.Controllers
     /// </summary>
     [Route("api/sites/{siteId}/[controller]")]
     [ApiController]
+    [Authorize]
     public class PingMonitoringController : ControllerBase
     {
         private readonly IMonitoringService _monitoringService;
