@@ -28,9 +28,10 @@ namespace SitesMonitoring.API
             // todo - add proper error handling
             
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            
-            services.AddAuthentication("BasicAuthentication")
-                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+
+            const string basicAuthentication = "BasicAuthentication";
+            services.AddAuthentication(basicAuthentication)
+                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(basicAuthentication, null);
             
             services.AddHostedService<TimedHostedService>();
             
