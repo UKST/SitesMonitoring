@@ -41,8 +41,11 @@ namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
                 null,
                 dueTime,
                 TimeSpan.FromMinutes(minMonitoringPeriod));
-            
-            Console.WriteLine("MonitoringHandler started");
+        }
+
+        public void Stop()
+        {
+            _timer.Change(Timeout.Infinite, 0);
         }
 
         private TimeSpan GetDueTime(DateTime now)
