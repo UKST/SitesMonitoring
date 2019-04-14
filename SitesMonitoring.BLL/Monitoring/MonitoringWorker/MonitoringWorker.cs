@@ -9,6 +9,7 @@ namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
     public class MonitoringWorker : IMonitoringWorker, IDisposable
     {
         private const int MinutesInHour = 60;
+        private const int HoursInDay = 24;
         
         private readonly IEnumerable<Lazy<IMonitoringProcess, MonitoringProcessMetadata>> _monitoringProcesses;
         private readonly IDateTimeProvider _dateTimeProvider;
@@ -45,8 +46,7 @@ namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
 
         private static TimeSpan GetDueTime(DateTime now)
         {
-            var minutesWhenMonitoringShouldStart = MonitoringConstants.AvailableMonitoringIntervalsInMinutes
-                .Select(i => i % MinutesInHour).Distinct().ToArray();
+            var minutesWhenMonitoringShouldStart = GetMinutesWhenMonitoringShouldStart().ToArray();
             var diffsWithCurrentMinute = minutesWhenMonitoringShouldStart.Select(i => i - now.Minute).ToArray();
             var minuteOfStart =
                 minutesWhenMonitoringShouldStart[
@@ -55,6 +55,25 @@ namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
             var dueTime = TimeSpan.FromMinutes(minuteOfStart - now.Minute);
             
             return dueTime.Add(-TimeSpan.FromSeconds(now.Second));
+        }
+
+        private static IEnumerable<int> GetMinutesWhenMonitoringShouldStart()
+        {
+            var allPossibleMinutes = new List<int>();
+            foreach (var interval in MonitoringConstants.AvailableMonitoringIntervalsInMinutes)
+            {
+                allPossibleMinutes.AddRange(TimeRange(0, MinutesInHour, interval));
+            }
+
+            return allPossibleMinutes.Distinct();
+        }
+
+        private static IEnumerable<int> TimeRange(int from, int to, int step)
+        {
+            for (var item = from; item <= to; item+=step)
+            {
+                yield return item;
+            }
         }
 
         private void RunMonitoringProcesses(object state)
@@ -82,8 +101,14 @@ namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
         {
             var now = _dateTimeProvider.Now;
 
-            return MonitoringConstants.AvailableMonitoringIntervalsInMinutes.Where(i =>
-                i % MinutesInHour == now.Minute);
+            var minutesIntervals = MonitoringConstants.AvailableMonitoringIntervalsInMinutes.Where(i =>
+                i % now.Minute == 0);
+
+            if (now.Minute != 0) return minutesIntervals;
+
+            var hoursIntervals =
+                MonitoringConstants.AvailableMonitoringIntervalsInHours.Where(i => i % now.Hour == 0);
+            return minutesIntervals.Union(hoursIntervals.Select(i => i * MinutesInHour));
         }
 
         public void Dispose()
