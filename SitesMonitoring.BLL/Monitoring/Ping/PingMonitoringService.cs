@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -5,28 +6,28 @@ namespace SitesMonitoring.BLL.Monitoring.Ping
 {
     public sealed class PingMonitoringService : IMonitoringService
     {
-        private readonly IMonitoringRepository<MonitoringEntity> _repository;
+        private readonly IMonitoringEntityRepository _monitoringEntityRepository;
         private readonly IMonitoringEntityValidator _validator;
         
         public PingMonitoringService(
-            IMonitoringRepository<MonitoringEntity> repository,
+            IMonitoringEntityRepository monitoringEntityRepository,
             IMonitoringEntityValidator validator)
         {
-            _repository = repository;
+            _monitoringEntityRepository = monitoringEntityRepository;
             _validator = validator;
         }
         
         public ICollection<MonitoringEntity> GetAllEntities(int siteId)
         {
             // todo validate if user have access to siteId
-            return _repository.GetBySiteId(siteId).ToArray();
+            return _monitoringEntityRepository.GetBySiteId(siteId).ToArray();
         }
 
         public MonitoringEntity CreateEntity(MonitoringEntity entity)
         {
             // todo validate if user have access to siteId
             _validator.Validate(entity);
-            _repository.Create(entity);
+            _monitoringEntityRepository.Create(entity);
 
             return entity;
         }
@@ -34,8 +35,9 @@ namespace SitesMonitoring.BLL.Monitoring.Ping
         public void RemoveEntity(int siteId, int id)
         {
             // todo validate if user have access to siteId
-            var entity = _repository.GetById(id);
-            _repository.Remove(entity);
+            var entity = _monitoringEntityRepository.GetById(id);
+            if (entity == null) throw new ArgumentException();
+            _monitoringEntityRepository.Remove(entity);
         }
     }
 }

@@ -33,7 +33,7 @@ namespace SitesMonitoring.API
             services.AddAuthentication(basicAuthentication)
                 .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(basicAuthentication, null);
             
-            services.AddHostedService<TimedHostedService>();
+            services.AddHostedService<MonitoringHostedService>();
             
             var mappingConfig = new MapperConfiguration(mc =>
             {

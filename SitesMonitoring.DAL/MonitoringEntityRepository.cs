@@ -1,10 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using SitesMonitoring.BLL.Monitoring;
 
 namespace SitesMonitoring.DAL
 {
-    public class MonitoringEntityRepository : IMonitoringRepository<MonitoringEntity>
+    public class MonitoringEntityRepository : IMonitoringEntityRepository
     {
         private readonly List<MonitoringEntity> _monitoringEntities = new List<MonitoringEntity>();
         
@@ -32,6 +33,11 @@ namespace SitesMonitoring.DAL
         public IEnumerable<MonitoringEntity> GetBySiteId(int siteId)
         {
             return _monitoringEntities.Where(i => i.SiteId == siteId);
+        }
+
+        public IEnumerable<MonitoringEntity> GetByMonitoringPeriods(IEnumerable<TimeSpan> periods)
+        {
+            return _monitoringEntities.Where(i => periods.Contains(i.Period));
         }
     }
 }

@@ -6,6 +6,5 @@ namespace SitesMonitoring.API.Models.PingMonitoring
     {
         public TimeSpan Period { get; set; }
         public string Address { get; set; }
-        public int SiteId { get; set; }
     }
 }
