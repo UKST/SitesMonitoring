@@ -103,13 +103,13 @@ namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
         {
             var now = _dateTimeProvider.Now;
 
-            var minutesIntervals = _monitoringSettings.AvailableMonitoringIntervalsInMinutes.Where(i =>
-                i % now.Minute == 0);
+            var minutesIntervals = _monitoringSettings.AvailableMonitoringIntervalsInMinutes
+                .Where(i => now.Minute == 0 || now.Minute % i == 0);
 
             if (now.Minute != 0) return minutesIntervals;
 
-            var hoursIntervals =
-                _monitoringSettings.AvailableMonitoringIntervalsInHours.Where(i => i % now.Hour == 0);
+            var hoursIntervals = _monitoringSettings.AvailableMonitoringIntervalsInHours
+                .Where(i => now.Hour == 0 || now.Hour % i == 0);
             return minutesIntervals.Union(hoursIntervals.Select(i => i * MinutesInHour));
         }
 
