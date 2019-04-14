@@ -6,8 +6,8 @@ namespace SitesMonitoring.API.Mapping
 {
     public class MappingProfile : Profile {
         public MappingProfile() {
-            CreateMap<PingMonitoringPostModel, MonitoringEntity>();
-            CreateMap<MonitoringEntity, PingMonitoringResult>();
+            CreateMap<PingMonitoringEntityPostModel, MonitoringEntity>();
+            CreateMap<MonitoringEntity, PingMonitoringEntityResultModel>();
         }
     }
 }

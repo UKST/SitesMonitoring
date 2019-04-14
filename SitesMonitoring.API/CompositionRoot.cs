@@ -18,13 +18,15 @@ namespace SitesMonitoring.API
             builder.RegisterType<DateTimeProvider>().As<IDateTimeProvider>().InstancePerLifetimeScope();
 
             builder.RegisterType<MonitoringWorker>().As<IMonitoringWorker>().SingleInstance();
-            builder.Register(c => new PingMonitoringProcess())
+            builder.RegisterType<PingMonitoringProcess>()
                 .As<IMonitoringProcess>()
                 .WithMetadata<MonitoringProcessMetadata>(configuration =>
                     configuration.For(m => m.Type, MonitoringType.Ping)).InstancePerLifetimeScope();
             builder.RegisterType<MonitoringSettings>().As<IMonitoringSettings>().SingleInstance();
             
             builder.RegisterType<MonitoringEntityRepository>().As<IMonitoringEntityRepository>()
+                .SingleInstance();
+            builder.RegisterType<Repository<MonitoringResult>>().As<IRepository<MonitoringResult>>()
                 .SingleInstance();
         }
     }

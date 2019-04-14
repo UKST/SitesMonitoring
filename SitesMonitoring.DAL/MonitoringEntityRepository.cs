@@ -1,11 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using SitesMonitoring.BLL.Monitoring;
 
 namespace SitesMonitoring.DAL
 {
-    public class MonitoringEntityRepository : RepositoryBase<MonitoringEntity>, IMonitoringEntityRepository
+    public class MonitoringEntityRepository : Repository<MonitoringEntity>, IMonitoringEntityRepository
     {
         public IEnumerable<MonitoringEntity> GetBySiteId(int siteId)
         {

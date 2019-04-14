@@ -6,7 +6,7 @@ using SitesMonitoring.BLL.Data;
 
 namespace SitesMonitoring.DAL
 {
-    public abstract class RepositoryBase<T> : IRepository<T> where T : EntityBase
+    public class Repository<T> : IRepository<T> where T : EntityBase
     {
         private long _id = 1;
         
