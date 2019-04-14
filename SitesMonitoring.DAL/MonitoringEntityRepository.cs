@@ -5,39 +5,16 @@ using SitesMonitoring.BLL.Monitoring;
 
 namespace SitesMonitoring.DAL
 {
-    public class MonitoringEntityRepository : IMonitoringEntityRepository
+    public class MonitoringEntityRepository : RepositoryBase<MonitoringEntity>, IMonitoringEntityRepository
     {
-        private readonly List<MonitoringEntity> _monitoringEntities = new List<MonitoringEntity>();
-        
-        public MonitoringEntity GetById(int id)
-        {
-            return _monitoringEntities.Single(i => i.Id == id);
-        }
-
-        public IEnumerable<MonitoringEntity> GetAll()
-        {
-            return _monitoringEntities;
-        }
-
-        public void Create(MonitoringEntity item)
-        {
-            // todo - increment id
-            _monitoringEntities.Add(item);
-        }
-
-        public void Remove(MonitoringEntity item)
-        {
-            _monitoringEntities.Remove(item);
-        }
-
         public IEnumerable<MonitoringEntity> GetBySiteId(int siteId)
         {
-            return _monitoringEntities.Where(i => i.SiteId == siteId);
+            return Entities.Where(i => i.SiteId == siteId);
         }
 
         public IEnumerable<MonitoringEntity> GetByMonitoringPeriods(IEnumerable<int> periods)
         {
-            return _monitoringEntities.Where(i => periods.Contains(i.PeriodInMinutes));
+            return Entities.Where(i => periods.Contains(i.PeriodInMinutes));
         }
     }
 }

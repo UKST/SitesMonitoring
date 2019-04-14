@@ -6,7 +6,7 @@ namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
     public class PingMonitoringProcess : IMonitoringProcess
     {
         private const int Timeout = 1024;
-        private const string BufferString = "a quick brown fox jumped over the lazy dog";
+        private const string BufferString = "32 bites data buffer            ";
         
         public void Start(MonitoringEntity entity)
         {

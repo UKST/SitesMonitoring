@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using SitesMonitoring.BLL.Endpoints;
 
 namespace SitesMonitoring.API.Controllers
 {
@@ -11,18 +7,11 @@ namespace SitesMonitoring.API.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
-        private readonly IHandler _handler;
-        
-        public ValuesController(IHandler handler)
-        {
-            _handler = handler;
-        }
-        
         // GET api/values
         [HttpGet]
         public ActionResult<ICollection<string>> Get()
         {
-            return Ok(_handler.HandleGet());
+            return new[] {"value1", "value2"};
         }
 
         // GET api/values/5

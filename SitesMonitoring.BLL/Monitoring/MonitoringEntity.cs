@@ -1,10 +1,10 @@
 using System;
+using SitesMonitoring.BLL.Data;
 
 namespace SitesMonitoring.BLL.Monitoring
 {
-    public class MonitoringEntity
+    public class MonitoringEntity : EntityBase
     {
-        public int Id { get; set; }
         public MonitoringType Type { get; set; }
         public int PeriodInMinutes { get; set; }
         public string Address { get; set; }

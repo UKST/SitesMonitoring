@@ -1,7 +1,5 @@
 using Autofac;
-using AutoMapper;
 using SitesMonitoring.BLL.Data;
-using SitesMonitoring.BLL.Endpoints;
 using SitesMonitoring.BLL.Monitoring;
 using SitesMonitoring.BLL.Monitoring.MonitoringWorker;
 using SitesMonitoring.BLL.Monitoring.Ping;
@@ -14,7 +12,6 @@ namespace SitesMonitoring.API
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<Handler>().As<IHandler>().InstancePerLifetimeScope();
             builder.RegisterType<PingMonitoringService>().As<IMonitoringService>().InstancePerLifetimeScope();
             builder.RegisterType<PingMonitoringEntityValidator>().As<IMonitoringEntityValidator>()
                 .InstancePerLifetimeScope();
@@ -27,7 +24,6 @@ namespace SitesMonitoring.API
                     configuration.For(m => m.Type, MonitoringType.Ping)).InstancePerLifetimeScope();
             builder.RegisterType<MonitoringSettings>().As<IMonitoringSettings>().SingleInstance();
             
-            builder.RegisterType<Repository>().As<IRepository<string>>().InstancePerLifetimeScope();
             builder.RegisterType<MonitoringEntityRepository>().As<IMonitoringEntityRepository>()
                 .SingleInstance();
         }
