@@ -35,9 +35,9 @@ namespace SitesMonitoring.DAL
             return _monitoringEntities.Where(i => i.SiteId == siteId);
         }
 
-        public IEnumerable<MonitoringEntity> GetByMonitoringPeriods(IEnumerable<TimeSpan> periods)
+        public IEnumerable<MonitoringEntity> GetByMonitoringPeriods(IEnumerable<int> periods)
         {
-            return _monitoringEntities.Where(i => periods.Contains(i.Period));
+            return _monitoringEntities.Where(i => periods.Contains(i.PeriodInMinutes));
         }
     }
 }

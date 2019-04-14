@@ -78,12 +78,12 @@ namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
             }
         }
 
-        private IEnumerable<TimeSpan> GetPeriodsOfMonitoring()
+        private IEnumerable<int> GetPeriodsOfMonitoring()
         {
             var now = _dateTimeProvider.Now;
 
             return MonitoringConstants.AvailableMonitoringIntervalsInMinutes.Where(i =>
-                i % MinutesInHour == now.Minute).Select(i => TimeSpan.FromMinutes(i));
+                i % MinutesInHour == now.Minute);
         }
 
         public void Dispose()

@@ -6,7 +6,7 @@ namespace SitesMonitoring.BLL.Monitoring
     {
         public int Id { get; set; }
         public MonitoringType Type { get; set; }
-        public TimeSpan Period { get; set; }
+        public int PeriodInMinutes { get; set; }
         public string Address { get; set; }
         public int SiteId { get; set; }
     }

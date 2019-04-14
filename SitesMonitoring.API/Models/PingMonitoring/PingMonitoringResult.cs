@@ -6,7 +6,7 @@ namespace SitesMonitoring.API.Models.PingMonitoring
     public sealed class PingMonitoringResult
     {
         public int Id { get; set; }
-        public TimeSpan Period { get; set; }
+        public int PeriodInMinutes { get; set; }
         public string Address { get; set; }
     }
 }
