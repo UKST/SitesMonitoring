@@ -25,6 +25,7 @@ namespace SitesMonitoring.API
                 .As<IMonitoringProcess>()
                 .WithMetadata<MonitoringProcessMetadata>(configuration =>
                     configuration.For(m => m.Type, MonitoringType.Ping)).InstancePerLifetimeScope();
+            builder.RegisterType<MonitoringSettings>().As<IMonitoringSettings>().SingleInstance();
             
             builder.RegisterType<Repository>().As<IRepository<string>>().InstancePerLifetimeScope();
             builder.RegisterType<MonitoringEntityRepository>().As<IMonitoringEntityRepository>()
