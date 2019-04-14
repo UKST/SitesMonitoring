@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SitesMonitoring.BLL.Monitoring.Ping
+namespace SitesMonitoring.BLL.Monitoring.PingMonitoringAPI
 {
     public sealed class PingMonitoringService : IMonitoringService
     {

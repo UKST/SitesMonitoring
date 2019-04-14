@@ -2,7 +2,7 @@ using Autofac;
 using SitesMonitoring.BLL.Data;
 using SitesMonitoring.BLL.Monitoring;
 using SitesMonitoring.BLL.Monitoring.MonitoringWorker;
-using SitesMonitoring.BLL.Monitoring.Ping;
+using SitesMonitoring.BLL.Monitoring.PingMonitoringAPI;
 using SitesMonitoring.BLL.Utils;
 using SitesMonitoring.DAL;
 

@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace SitesMonitoring.BLL.Monitoring.Ping
+namespace SitesMonitoring.BLL.Monitoring.PingMonitoringAPI
 {
     public sealed class PingMonitoringEntityValidator : IMonitoringEntityValidator
     {

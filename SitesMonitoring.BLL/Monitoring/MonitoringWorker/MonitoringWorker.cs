@@ -31,7 +31,6 @@ namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
         
         public void Start()
         {
-            // todo handle finalization / cancellation
             var now = _dateTimeProvider.Now;
 
             var minMonitoringPeriod = _monitoringSettings.AvailableMonitoringIntervalsInMinutes.Min();

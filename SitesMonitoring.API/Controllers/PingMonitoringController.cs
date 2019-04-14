@@ -30,15 +30,21 @@ namespace SitesMonitoring.API.Controllers
         [HttpGet]
         public ActionResult<ICollection<PingMonitoringEntityResultModel>> GetAll(int siteId)
         {
-            return Ok(_monitoringService.GetAllEntities(siteId)
-                .Map<ICollection<PingMonitoringEntityResultModel>>(_mapper));
+            var result = _monitoringService.GetAllEntities(siteId);
+            
+            return Ok(_mapper.Map<ICollection<PingMonitoringEntityResultModel>>(result));
         }
         
         [HttpPost]
         public PingMonitoringEntityResultModel Post(int siteId, [FromBody] PingMonitoringEntityPostModel model)
         {
-            return _monitoringService.CreateEntity(model.Map<PingMonitoringEntityPostModel, MonitoringEntity>(_mapper, entity => entity.SiteId = siteId ))
-                .Map<PingMonitoringEntityResultModel>(_mapper);
+            var entity = _mapper.Map<PingMonitoringEntityPostModel, MonitoringEntity>(model,
+                options => options.AfterMap(
+                    (s, d) => { d.SiteId = siteId; }));
+            
+            var result = _monitoringService.CreateEntity(entity);
+            
+            return _mapper.Map<PingMonitoringEntityResultModel>(result);
         }
         
         [HttpDelete("{entityId}")]
