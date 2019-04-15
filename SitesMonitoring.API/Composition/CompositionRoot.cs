@@ -29,9 +29,10 @@ namespace SitesMonitoring.API.Composition
             builder.RegisterType<SitesService>().As<ISitesService>().InstancePerLifetimeScope();
             builder.RegisterType<SitesStatisticService>().As<ISitesStatisticService>().InstancePerLifetimeScope();
             builder.RegisterType<PingMonitoringRequest>().As<IMonitoringRequest<PingReply>>().InstancePerLifetimeScope();
-            
             builder.RegisterType<MonitoringWorker>().As<IMonitoringWorker>().SingleInstance();
             builder.RegisterType<MonitoringSettings>().As<IMonitoringSettings>().SingleInstance();
+            builder.RegisterType<MonitoringPeriodsProvider>().As<IMonitoringPeriodsProvider>()
+                .InstancePerLifetimeScope();
         }
 
         private static void RegisterKeyedServices(ContainerBuilder builder)
