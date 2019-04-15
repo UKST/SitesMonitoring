@@ -25,6 +25,7 @@ namespace SitesMonitoring.BLL.Monitoring.StatisticAPI
             var monitoringEntities = _monitoringEntityRepository.GetBySiteId(site.Id).Where(i => i.Type == MonitoringType.Ping);
             var siteHealthResults = monitoringEntities
                 .Select(monitoringEntity => _monitoringResultRepository.GetLast(monitoringEntity.Id))
+                .Where(monitoringResult => monitoringResult != null)
                 .Select(monitoringResult => _healthStatusMapper.Map(monitoringResult.Data))
                 .ToList();
 
