@@ -37,7 +37,7 @@ namespace SitesMonitoring.API.IntegrationTests
         }
         
         [Test]
-        public async Task GetAll_ValidCredentialsProvided_OkResponse()
+        public async Task GetAll_ValidCredentialsProvidedButSiteNotExist_NotFoundResponse()
         {
             // Arrange
             var client = GetAuthenticatedClient();
@@ -46,8 +46,10 @@ namespace SitesMonitoring.API.IntegrationTests
             var response = await client.GetAsync(EndpointUrl);
 
             // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
+        
+        // todo other tests
         
         private HttpClient GetUnauthenticatedClient()
         {
