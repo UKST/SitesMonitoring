@@ -23,6 +23,10 @@ namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
             var now = _dateTimeProvider.Now;
             
             var minutesWhenMonitoringShouldStart = GetMinutesWhenMonitoringShouldStart().ToArray();
+            
+            if (!minutesWhenMonitoringShouldStart.Any())
+                return TimeSpan.MaxValue;
+            
             var diffsWithCurrentMinute = minutesWhenMonitoringShouldStart.Select(i => i - now.Minute).ToArray();
             var minuteOfStart =
                 minutesWhenMonitoringShouldStart[
