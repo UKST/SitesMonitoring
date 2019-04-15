@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SitesMonitoring.API.Models.Sites;
 using SitesMonitoring.BLL.Monitoring.SitesAPI;
@@ -7,6 +8,7 @@ namespace SitesMonitoring.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class SitesController : ControllerBase
     {
         private readonly ISitesService _sitesService;
