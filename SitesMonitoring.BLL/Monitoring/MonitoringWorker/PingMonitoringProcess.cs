@@ -1,20 +1,20 @@
+using System;
 using System.Net.NetworkInformation;
 using System.Text;
-using SitesMonitoring.BLL.Data;
 using SitesMonitoring.BLL.Utils;
 
 namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
 {
     public class PingMonitoringProcess : IMonitoringProcess
     {
-        private readonly IRepository<MonitoringResult> _monitoringResultRepository;
+        private readonly IMonitoringResultRepository _monitoringResultRepository;
         private readonly IDateTimeProvider _dateTimeProvider;
         
         private const int Timeout = 1024;
         private const string BufferString = "32 bites data buffer            ";
 
         public PingMonitoringProcess(
-            IRepository<MonitoringResult> monitoringResultRepository,
+            IMonitoringResultRepository monitoringResultRepository,
             IDateTimeProvider dateTimeProvider)
         {
             _monitoringResultRepository = monitoringResultRepository;
@@ -23,7 +23,7 @@ namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
         
         public void Start(MonitoringEntity entity)
         {
-            var pingSender = new System.Net.NetworkInformation.Ping();
+            var pingSender = new Ping();
             var options = new PingOptions
             {
                 DontFragment = true
@@ -31,11 +31,20 @@ namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
     
             var buffer = Encoding.ASCII.GetBytes(BufferString);
 
-            var reply = pingSender.Send(entity.Address, Timeout, buffer, options);
+            PingReply reply = null;
+
+            try
+            {
+                reply = pingSender.Send(entity.Address, Timeout, buffer, options);
+            }
+            catch (PingException)
+            {
+                // todo logging    
+            }
             
             _monitoringResultRepository.Create(new MonitoringResult
             {
-                Data = reply?.Status,
+                Data = reply?.Status ?? IPStatus.Unknown,
                 CreatedDate = _dateTimeProvider.Now,
                 MonitoringEntityId = entity.Id
             });

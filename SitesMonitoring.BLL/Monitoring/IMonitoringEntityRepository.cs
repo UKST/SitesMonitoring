@@ -6,7 +6,7 @@ namespace SitesMonitoring.BLL.Monitoring
 {
     public interface IMonitoringEntityRepository : IRepository<MonitoringEntity>
     {
-        IEnumerable<MonitoringEntity> GetBySiteId(int siteId);
+        IEnumerable<MonitoringEntity> GetBySiteId(long siteId);
         IEnumerable<MonitoringEntity> GetByMonitoringPeriods(IEnumerable<int> periods);
     }
 }

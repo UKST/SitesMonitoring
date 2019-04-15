@@ -3,6 +3,8 @@ using SitesMonitoring.BLL.Data;
 using SitesMonitoring.BLL.Monitoring;
 using SitesMonitoring.BLL.Monitoring.MonitoringWorker;
 using SitesMonitoring.BLL.Monitoring.PingMonitoringAPI;
+using SitesMonitoring.BLL.Monitoring.SitesAPI;
+using SitesMonitoring.BLL.Monitoring.StatisticAPI;
 using SitesMonitoring.BLL.Utils;
 using SitesMonitoring.DAL;
 
@@ -16,7 +18,13 @@ namespace SitesMonitoring.API
             builder.RegisterType<PingMonitoringEntityValidator>().As<IMonitoringEntityValidator>()
                 .InstancePerLifetimeScope();
             builder.RegisterType<DateTimeProvider>().As<IDateTimeProvider>().InstancePerLifetimeScope();
-
+            builder.RegisterType<SitesService>().As<ISitesService>().InstancePerLifetimeScope();
+            builder.RegisterType<SitesStatisticService>().As<ISitesStatisticService>().InstancePerLifetimeScope();
+            // replace with metadata or keyed service approach if statistic based on different monitors will be required
+            builder.RegisterType<PingHealthStatusMapper>().As<IHealthStatusMapper>().InstancePerLifetimeScope();
+            builder.RegisterType<LastPingSiteHealthCalculationStrategy>().As<ISiteHealthCalculationStrategy>()
+                .InstancePerLifetimeScope();
+            
             builder.RegisterType<MonitoringWorker>().As<IMonitoringWorker>().SingleInstance();
             builder.RegisterType<PingMonitoringProcess>()
                 .As<IMonitoringProcess>()
@@ -26,7 +34,9 @@ namespace SitesMonitoring.API
             
             builder.RegisterType<MonitoringEntityRepository>().As<IMonitoringEntityRepository>()
                 .SingleInstance();
-            builder.RegisterType<Repository<MonitoringResult>>().As<IRepository<MonitoringResult>>()
+            builder.RegisterType<MonitoringResultRepository>().As<IMonitoringResultRepository>()
+                .SingleInstance();
+            builder.RegisterType<Repository<Site>>().As<IRepository<Site>>()
                 .SingleInstance();
         }
     }

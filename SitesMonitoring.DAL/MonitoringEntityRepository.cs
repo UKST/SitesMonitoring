@@ -6,7 +6,7 @@ namespace SitesMonitoring.DAL
 {
     public class MonitoringEntityRepository : Repository<MonitoringEntity>, IMonitoringEntityRepository
     {
-        public IEnumerable<MonitoringEntity> GetBySiteId(int siteId)
+        public IEnumerable<MonitoringEntity> GetBySiteId(long siteId)
         {
             return Entities.Where(i => i.SiteId == siteId);
         }
