@@ -4,7 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SitesMonitoring.BLL.Monitoring.MonitoringWorker;
 
-namespace SitesMonitoring.API
+namespace SitesMonitoring.API.HostedServices
 {
     public class MonitoringHostedService : IHostedService
     {

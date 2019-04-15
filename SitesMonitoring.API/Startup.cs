@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SitesMonitoring.API.Authentication;
+using SitesMonitoring.API.Composition;
+using SitesMonitoring.API.HostedServices;
 using SitesMonitoring.API.Mapping;
 
 namespace SitesMonitoring.API

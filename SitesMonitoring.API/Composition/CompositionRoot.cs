@@ -8,7 +8,7 @@ using SitesMonitoring.BLL.Monitoring.StatisticAPI;
 using SitesMonitoring.BLL.Utils;
 using SitesMonitoring.DAL;
 
-namespace SitesMonitoring.API
+namespace SitesMonitoring.API.Composition
 {
     public class CompositionRoot : Module
     {
