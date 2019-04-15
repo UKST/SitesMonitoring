@@ -4,7 +4,8 @@ namespace SitesMonitoring.BLL.Monitoring
 {
     public interface IMonitoringSettings
     {
-        ICollection<int> AvailableMonitoringIntervalsInMinutes { get; }
-        ICollection<int> AvailableMonitoringIntervalsInHours { get; }
+        ICollection<int> AvailableMonitoringPeriodsInMinutes { get; }
+        ICollection<int> AvailableMonitoringPeriodsInHours { get; }
+        ICollection<int> CombinedMonitoringPeriodsInMinutes { get; }
     }
 }

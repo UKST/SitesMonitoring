@@ -8,8 +8,6 @@ namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
 {
     public class MonitoringWorker : IMonitoringWorker, IDisposable
     {
-        private const int MinutesInHour = 60;
-        
         private readonly IEnumerable<Lazy<IMonitoringProcess, MonitoringProcessMetadata>> _monitoringProcesses;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IMonitoringEntityRepository _monitoringEntityRepository;
@@ -33,7 +31,7 @@ namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
         {
             var now = _dateTimeProvider.Now;
 
-            var minMonitoringPeriod = _monitoringSettings.AvailableMonitoringIntervalsInMinutes.Min();
+            var minMonitoringPeriod = _monitoringSettings.AvailableMonitoringPeriodsInMinutes.Min();
             var dueTime = GetDueTime(now);
             
             _timer = new Timer(
@@ -64,9 +62,9 @@ namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
         private IEnumerable<int> GetMinutesWhenMonitoringShouldStart()
         {
             var allPossibleMinutes = new List<int>();
-            foreach (var interval in _monitoringSettings.AvailableMonitoringIntervalsInMinutes)
+            foreach (var interval in _monitoringSettings.AvailableMonitoringPeriodsInMinutes)
             {
-                allPossibleMinutes.AddRange(TimeRange(0, MinutesInHour, interval));
+                allPossibleMinutes.AddRange(TimeRange(0, MonitoringConstants.MinutesInHour, interval));
             }
 
             return allPossibleMinutes.Distinct();
@@ -105,14 +103,14 @@ namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
         {
             var now = _dateTimeProvider.Now;
 
-            var minutesIntervals = _monitoringSettings.AvailableMonitoringIntervalsInMinutes
+            var minutesIntervals = _monitoringSettings.AvailableMonitoringPeriodsInMinutes
                 .Where(i => now.Minute == 0 || now.Minute % i == 0);
 
             if (now.Minute != 0) return minutesIntervals;
 
-            var hoursIntervals = _monitoringSettings.AvailableMonitoringIntervalsInHours
+            var hoursIntervals = _monitoringSettings.AvailableMonitoringPeriodsInHours
                 .Where(i => now.Hour == 0 || now.Hour % i == 0);
-            return minutesIntervals.Union(hoursIntervals.Select(i => i * MinutesInHour));
+            return minutesIntervals.Union(hoursIntervals.Select(i => i * MonitoringConstants.MinutesInHour));
         }
 
         public void Dispose()

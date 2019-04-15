@@ -12,9 +12,9 @@ namespace SitesMonitoring.DAL
         
         protected List<T> Entities { get; } = new List<T>();
 
-        public T GetById(int id)
+        public T GetById(long id)
         {
-            return Entities.Single(i => i.Id == id);
+            return Entities.SingleOrDefault(i => i.Id == id);
         }
 
         public IEnumerable<T> GetAll()

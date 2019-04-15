@@ -6,6 +6,9 @@ using SitesMonitoring.BLL.Monitoring.SitesAPI;
 
 namespace SitesMonitoring.API.Controllers
 {
+    /// <summary>
+    /// Includes operations for setup site. Uses minimal methods amount required for working with monitoring statistics.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]

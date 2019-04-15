@@ -1,6 +1,4 @@
-using System;
 using System.Net.NetworkInformation;
-using System.Text;
 using SitesMonitoring.BLL.Utils;
 
 namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
@@ -9,33 +7,24 @@ namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
     {
         private readonly IMonitoringResultRepository _monitoringResultRepository;
         private readonly IDateTimeProvider _dateTimeProvider;
+        private readonly IMonitoringRequest<PingReply> _pingMonitoringRequest;
         
-        private const int Timeout = 1024;
-        private const string BufferString = "32 bites data buffer            ";
-
         public PingMonitoringProcess(
             IMonitoringResultRepository monitoringResultRepository,
-            IDateTimeProvider dateTimeProvider)
+            IDateTimeProvider dateTimeProvider,
+            IMonitoringRequest<PingReply> pingMonitoringRequest)
         {
             _monitoringResultRepository = monitoringResultRepository;
             _dateTimeProvider = dateTimeProvider;
+            _pingMonitoringRequest = pingMonitoringRequest;
         }
         
         public void Start(MonitoringEntity entity)
         {
-            var pingSender = new Ping();
-            var options = new PingOptions
-            {
-                DontFragment = true
-            };
-    
-            var buffer = Encoding.ASCII.GetBytes(BufferString);
-
             PingReply reply = null;
-
             try
             {
-                reply = pingSender.Send(entity.Address, Timeout, buffer, options);
+                reply = _pingMonitoringRequest.Send(entity);
             }
             catch (PingException)
             {
