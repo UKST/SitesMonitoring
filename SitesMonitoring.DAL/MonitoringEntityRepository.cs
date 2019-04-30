@@ -4,7 +4,7 @@ using SitesMonitoring.BLL.Monitoring;
 
 namespace SitesMonitoring.DAL
 {
-    public class MonitoringEntityRepository : Repository<MonitoringEntity>, IMonitoringEntityRepository
+    public class MonitoringEntityInMemoryRepository : InMemoryRepository<MonitoringEntity>, IMonitoringEntityRepository
     {
         public IEnumerable<MonitoringEntity> GetBySiteId(long siteId)
         {

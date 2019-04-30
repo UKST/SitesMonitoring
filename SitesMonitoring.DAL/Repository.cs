@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Linq;
 using SitesMonitoring.BLL.Data;
 
@@ -8,33 +6,34 @@ namespace SitesMonitoring.DAL
 {
     public class Repository<T> : IRepository<T> where T : EntityBase
     {
-        private long _id = 1;
+        // todo - add async support
+        private readonly SitesMonitoringDbContext _db;
         
-        protected List<T> Entities { get; } = new List<T>();
-
+        public Repository(SitesMonitoringDbContext db)
+        {
+            _db = db;
+        }
+        
         public T GetById(long id)
         {
-            return Entities.SingleOrDefault(i => i.Id == id);
+            return _db.Set<T>().Find(id);
         }
 
         public IEnumerable<T> GetAll()
         {
-            return Entities;
+            return _db.Set<T>().ToArray();
         }
 
         public void Create(T item)
         {
-            // emulate identity property in database
-            if (item.Id != 0) 
-                throw new ArgumentException("Identity insert not supported");
-            
-            item.Id = _id++;
-            Entities.Add(item);
+            _db.Set<T>().Add(item);
+            _db.SaveChanges(); // todo - move to UoW          
         }
 
         public void Remove(T item)
         {
-            Entities.Remove(item);
+            _db.Set<T>().Remove(item);
+            _db.SaveChanges(); // todo - move to UoW
         }
     }
 }
