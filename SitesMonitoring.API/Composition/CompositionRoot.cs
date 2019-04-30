@@ -52,14 +52,19 @@ namespace SitesMonitoring.API.Composition
         
         private static void RegisterRepositories(ContainerBuilder builder)
         {
-            builder.RegisterType<MonitoringEntityInMemoryRepository>().As<IMonitoringEntityRepository>()
-                .SingleInstance();
-            builder.RegisterType<MonitoringResultInMemoryRepository>().As<IMonitoringResultRepository>()
-                .SingleInstance();
-            builder.RegisterType<InMemoryRepository<Site>>().As<IRepository<Site>>()
-                .SingleInstance();
+//            builder.RegisterType<MonitoringEntityInMemoryRepository>().As<IMonitoringEntityRepository>()
+//                .SingleInstance();
+//            builder.RegisterType<MonitoringResultInMemoryRepository>().As<IMonitoringResultRepository>()
+//                .SingleInstance();
+//            builder.RegisterType<InMemoryRepository<Site>>().As<IRepository<Site>>()
+//                .SingleInstance();
 
             builder.RegisterType<SitesMonitoringDbContext>().As<SitesMonitoringDbContext>().InstancePerLifetimeScope();
+            
+            builder.RegisterType<MonitoringEntityRepository>().As<IMonitoringEntityRepository>()
+                .SingleInstance();
+            builder.RegisterType<MonitoringResultRepository>().As<IMonitoringResultRepository>()
+                .SingleInstance();            
             builder.RegisterType<Repository<Site>>().As<IRepository<Site>>().InstancePerLifetimeScope();
         } 
     }

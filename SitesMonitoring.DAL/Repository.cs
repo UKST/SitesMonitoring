@@ -7,33 +7,33 @@ namespace SitesMonitoring.DAL
     public class Repository<T> : IRepository<T> where T : EntityBase
     {
         // todo - add async support
-        private readonly SitesMonitoringDbContext _db;
-        
+        protected SitesMonitoringDbContext Db { get; }
+
         public Repository(SitesMonitoringDbContext db)
         {
-            _db = db;
+            Db = db;
         }
         
         public T GetById(long id)
         {
-            return _db.Set<T>().Find(id);
+            return Db.Set<T>().Find(id);
         }
 
         public IEnumerable<T> GetAll()
         {
-            return _db.Set<T>().ToArray();
+            return Db.Set<T>().ToArray();
         }
 
         public void Create(T item)
         {
-            _db.Set<T>().Add(item);
-            _db.SaveChanges(); // todo - move to UoW          
+            Db.Set<T>().Add(item);
+            Db.SaveChanges(); // todo - move to UoW          
         }
 
         public void Remove(T item)
         {
-            _db.Set<T>().Remove(item);
-            _db.SaveChanges(); // todo - move to UoW
+            Db.Set<T>().Remove(item);
+            Db.SaveChanges(); // todo - move to UoW
         }
     }
 }

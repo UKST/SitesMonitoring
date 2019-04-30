@@ -1,21 +1,22 @@
 using System;
 using System.Net.NetworkInformation;
+using SitesMonitoring.BLL.Monitoring.PingMonitoringAPI;
 
 namespace SitesMonitoring.BLL.Monitoring.StatisticAPI
 {
     public class PingHealthStatusMapper : IHealthStatusMapper
     {
-        public SiteHealth Map(object resultData)
+        public SiteHealth Map(MonitoringResult result)
         {
-            if (resultData == null)
-                throw new ArgumentNullException(nameof(resultData));
+            if (result == null)
+                throw new ArgumentNullException(nameof(result));
+            
+            if (result.Data == null)
+                throw new ArgumentNullException(nameof(result.Data));
 
-            var typedData = resultData as IPStatus?;
+            var typedData = result.GetData<PingMonitoringResultData>();
 
-            if (typedData == null)
-                throw new ArgumentException($"{nameof(resultData)} must have {nameof(IPStatus)} type");
-
-            return typedData == IPStatus.Success ? SiteHealth.Good : SiteHealth.Bad;
+            return typedData.IPStatus == IPStatus.Success ? SiteHealth.Good : SiteHealth.Bad;
         }
     }
 }

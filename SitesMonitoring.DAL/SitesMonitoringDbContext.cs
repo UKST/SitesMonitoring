@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using SitesMonitoring.BLL.Monitoring;
 using SitesMonitoring.BLL.Monitoring.SitesAPI;
 
 namespace SitesMonitoring.DAL
@@ -6,10 +7,13 @@ namespace SitesMonitoring.DAL
     public class SitesMonitoringDbContext : DbContext
     {
         public DbSet<Site> Sites { get; set; }
+        public DbSet<MonitoringEntity> MonitoringEntities { get; set; }
+        public DbSet<MonitoringResult> MonitoringResults { get; set; }
  
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=sitesMonitoring;Username=postgres");
+            // todo - move connection string to config
+            optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=sitesMonitoring;Username=postgres;Password=");
         }
     }
 }

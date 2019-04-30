@@ -1,4 +1,5 @@
 using System.Net.NetworkInformation;
+using SitesMonitoring.BLL.Monitoring.PingMonitoringAPI;
 using SitesMonitoring.BLL.Utils;
 
 namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
@@ -30,13 +31,15 @@ namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
             {
                 // todo logging    
             }
-            
-            _monitoringResultRepository.Create(new MonitoringResult
+
+            var result = new MonitoringResult
             {
-                Data = reply?.Status ?? IPStatus.Unknown,
                 CreatedDate = _dateTimeProvider.Now,
                 MonitoringEntityId = entity.Id
-            });
+            };
+            result.SetData(new PingMonitoringResultData {IPStatus = reply?.Status ?? IPStatus.Unknown});
+
+            _monitoringResultRepository.Create(result);
         }
     }
 }

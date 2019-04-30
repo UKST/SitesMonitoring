@@ -26,7 +26,7 @@ namespace SitesMonitoring.BLL.Monitoring.StatisticAPI
             var siteHealthResults = monitoringEntities
                 .Select(monitoringEntity => _monitoringResultRepository.GetLast(monitoringEntity.Id))
                 .Where(monitoringResult => monitoringResult != null)
-                .Select(monitoringResult => _healthStatusMapper.Map(monitoringResult.Data))
+                .Select(_healthStatusMapper.Map)
                 .ToList();
 
             if (siteHealthResults.Any(i => i == SiteHealth.Good) && siteHealthResults.Any(i => i == SiteHealth.Bad))
