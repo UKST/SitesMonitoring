@@ -10,6 +10,10 @@ namespace SitesMonitoring.DAL
         public DbSet<MonitoringEntity> MonitoringEntities { get; set; }
         public DbSet<MonitoringResult> MonitoringResults { get; set; }
  
+        public SitesMonitoringDbContext(DbContextOptions options)
+            : base(options)
+        { }
+        
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             // todo - move connection string to config

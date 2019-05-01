@@ -49,22 +49,13 @@ namespace SitesMonitoring.API.Composition
             builder.RegisterType<PingMonitoringValidator>().As<IMonitoringValidator>()
                 .InstancePerLifetimeScope();
         }
-        
+              
         private static void RegisterRepositories(ContainerBuilder builder)
         {
-//            builder.RegisterType<MonitoringEntityInMemoryRepository>().As<IMonitoringEntityRepository>()
-//                .SingleInstance();
-//            builder.RegisterType<MonitoringResultInMemoryRepository>().As<IMonitoringResultRepository>()
-//                .SingleInstance();
-//            builder.RegisterType<InMemoryRepository<Site>>().As<IRepository<Site>>()
-//                .SingleInstance();
-
-            builder.RegisterType<SitesMonitoringDbContext>().As<SitesMonitoringDbContext>().InstancePerLifetimeScope();
-            
             builder.RegisterType<MonitoringEntityRepository>().As<IMonitoringEntityRepository>()
-                .SingleInstance();
+                .InstancePerLifetimeScope();
             builder.RegisterType<MonitoringResultRepository>().As<IMonitoringResultRepository>()
-                .SingleInstance();            
+                .InstancePerLifetimeScope();            
             builder.RegisterType<Repository<Site>>().As<IRepository<Site>>().InstancePerLifetimeScope();
         } 
     }

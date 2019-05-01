@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 using Autofac;
+using Autofac.Core;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
@@ -19,6 +21,7 @@ using SitesMonitoring.API.HostedServices;
 using SitesMonitoring.API.Mapping;
 using SitesMonitoring.API.Models;
 using SitesMonitoring.BLL.ErrorHandling;
+using SitesMonitoring.DAL;
 
 namespace SitesMonitoring.API
 {
@@ -34,27 +37,19 @@ namespace SitesMonitoring.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            ConfigureMvc(services);
 
             const string basicAuthentication = "BasicAuthentication";
             services.AddAuthentication(basicAuthentication)
                 .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(basicAuthentication, null);
             
             services.AddHostedService<MonitoringHostedService>();
-            
-            var mappingConfig = new MapperConfiguration(mc =>
-            {
-                mc.AddProfile(new MappingProfile());
-            });
 
-            var mapper = mappingConfig.CreateMapper();
-            services.AddSingleton(mapper);
+            ConfigureMapping(services);
 
-            var containerBuilder = new ContainerBuilder();
-            containerBuilder.RegisterModule<CompositionRoot>();
-            containerBuilder.Populate(services);
-            var container = containerBuilder.Build();
-            return new AutofacServiceProvider(container);
+            ConfigureDb(services);
+
+            return ConfigureDependencyInjection<CompositionRoot>(services);
         }
         
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -74,7 +69,37 @@ namespace SitesMonitoring.API
             app.UseAuthentication();
             app.UseMvc();
         }
+        
+        protected virtual void ConfigureMvc(IServiceCollection services)
+        {
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+        }
 
+        protected virtual void ConfigureDb(IServiceCollection services)
+        {
+            services.AddDbContext<SitesMonitoringDbContext>();
+        }
+
+        private static void ConfigureMapping(IServiceCollection services)
+        {
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+
+            var mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
+        }
+
+        private static IServiceProvider ConfigureDependencyInjection<T>(IServiceCollection services) where T : IModule, new()
+        {
+            var containerBuilder = new ContainerBuilder();
+            containerBuilder.RegisterModule<T>();
+            containerBuilder.Populate(services);
+            var container = containerBuilder.Build();
+            return new AutofacServiceProvider(container);
+        }
+        
         private static async Task HandleErrors(HttpContext context)
         {
             context.Response.ContentType = "application/json";

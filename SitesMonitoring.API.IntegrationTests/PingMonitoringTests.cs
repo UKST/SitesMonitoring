@@ -20,7 +20,7 @@ namespace SitesMonitoring.API.IntegrationTests
         public PingMonitoringTests()
         {
             _server = new TestServer(new WebHostBuilder()
-                .UseStartup<Startup>());
+                .UseStartup<InMemoryDbEndpointStartup>());
         }
 
         [Test]
