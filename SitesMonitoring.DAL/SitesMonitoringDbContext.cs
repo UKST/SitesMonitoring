@@ -17,7 +17,8 @@ namespace SitesMonitoring.DAL
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             // todo - move connection string to config
-            optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=sitesMonitoring;Username=postgres;Password=");
+            // todo - support different environments with different connection string: at least one with host=postgres and one for host=localhost (docker / dev deployment)
+            optionsBuilder.UseNpgsql("Host=postgres;Port=5432;Database=sitesMonitoring;Username=postgres;Password=");
         }
     }
 }
