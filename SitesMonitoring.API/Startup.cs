@@ -1,6 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Reflection;
 using System.Threading.Tasks;
 using Autofac;
 using Autofac.Core;
@@ -12,6 +10,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -68,6 +67,8 @@ namespace SitesMonitoring.API
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseMvc();
+            
+            MigrateDatabaseOnStartup(app);
         }
         
         protected virtual void ConfigureMvc(IServiceCollection services)
@@ -134,6 +135,15 @@ namespace SitesMonitoring.API
         private static void CreateErrorResult(HttpContext context, int statusCode)
         {
             context.Response.StatusCode = statusCode;
+        }
+
+        private static void MigrateDatabaseOnStartup(IApplicationBuilder app)
+        {
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetRequiredService<SitesMonitoringDbContext>();
+                context.Database.Migrate();
+            }
         }
     }
 }
