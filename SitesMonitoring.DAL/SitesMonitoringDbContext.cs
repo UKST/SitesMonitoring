@@ -22,8 +22,6 @@ namespace SitesMonitoring.DAL
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            // todo - move connection string to config
-            // todo - support different environments with different connection string: at least one with host=postgres and one for host=localhost (docker / dev deployment)
             optionsBuilder.UseNpgsql(_config.Value.ConnectionStrings.DbConnectionString);
         }
     }
