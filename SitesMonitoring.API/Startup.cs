@@ -19,6 +19,7 @@ using SitesMonitoring.API.Composition;
 using SitesMonitoring.API.HostedServices;
 using SitesMonitoring.API.Mapping;
 using SitesMonitoring.API.Models;
+using SitesMonitoring.BLL.Configs;
 using SitesMonitoring.BLL.ErrorHandling;
 using SitesMonitoring.DAL;
 
@@ -26,9 +27,13 @@ namespace SitesMonitoring.API
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IHostingEnvironment env)
         {
-            Configuration = configuration;
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+
+            Configuration = builder.Build();
         }
 
         public IConfiguration Configuration { get; }
@@ -37,6 +42,8 @@ namespace SitesMonitoring.API
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             ConfigureMvc(services);
+            
+            services.Configure<AppConfig>(Configuration.GetSection("AppConfig"));
 
             const string basicAuthentication = "BasicAuthentication";
             services.AddAuthentication(basicAuthentication)
