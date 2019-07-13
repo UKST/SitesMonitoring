@@ -1,4 +1,6 @@
 using System;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -9,7 +11,7 @@ namespace SitesMonitoring.API.IntegrationTests
 {
     public class InMemoryDbEndpointStartup : Startup
     {
-        public InMemoryDbEndpointStartup(IConfiguration configuration) : base(configuration)
+        public InMemoryDbEndpointStartup(IHostingEnvironment env) : base(env)
         {
         }
 
@@ -28,6 +30,10 @@ namespace SitesMonitoring.API.IntegrationTests
                     options.UseInMemoryDatabase("IntegrationTestsDatabase")
                         .UseInternalServiceProvider(serviceProvider);
                 });
+        }
+
+        protected override void MigrateDatabaseOnStartup(IApplicationBuilder app)
+        {
         }
     }
 }

@@ -88,6 +88,15 @@ namespace SitesMonitoring.API
         {
             services.AddDbContext<SitesMonitoringDbContext>();
         }
+        
+        protected virtual void MigrateDatabaseOnStartup(IApplicationBuilder app)
+        {
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetRequiredService<SitesMonitoringDbContext>();
+                context.Database.Migrate();
+            }
+        }
 
         private static void ConfigureMapping(IServiceCollection services)
         {
@@ -143,15 +152,6 @@ namespace SitesMonitoring.API
         private static void CreateErrorResult(HttpContext context, int statusCode)
         {
             context.Response.StatusCode = statusCode;
-        }
-
-        private static void MigrateDatabaseOnStartup(IApplicationBuilder app)
-        {
-            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
-            {
-                var context = serviceScope.ServiceProvider.GetRequiredService<SitesMonitoringDbContext>();
-                context.Database.Migrate();
-            }
         }
     }
 }
