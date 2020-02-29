@@ -1,24 +1,20 @@
-using System;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using SitesMonitoring.DAL;
 
 namespace SitesMonitoring.API.IntegrationTests
 {
     public class InMemoryDbEndpointStartup : Startup
     {
-        public InMemoryDbEndpointStartup(IHostingEnvironment env) : base(env)
+        public InMemoryDbEndpointStartup(IHostEnvironment env) : base(env)
         {
         }
 
-        protected override void ConfigureMvc(IServiceCollection services)
+        protected override void AddControllers(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-                .AddApplicationPart(typeof(Startup).Assembly);
+            services.AddControllers().AddApplicationPart(typeof(Startup).Assembly);
         }
 
         protected override void ConfigureDb(IServiceCollection services)

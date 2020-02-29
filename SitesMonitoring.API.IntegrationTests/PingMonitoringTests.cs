@@ -2,9 +2,11 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Autofac.Extensions.DependencyInjection;
 using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.Hosting;
 using NUnit.Framework;
 
 namespace SitesMonitoring.API.IntegrationTests
@@ -15,12 +17,22 @@ namespace SitesMonitoring.API.IntegrationTests
         private const string AuthenticationScheme = "Basic";
         private const string AuthenticationParameter = "YWRtaW46cGFzc3dvcmQ=";
         
-        private readonly TestServer _server;
+        private TestServer _server;
 
-        public PingMonitoringTests()
+        [OneTimeSetUp]
+        public async Task SetUp()
         {
-            _server = new TestServer(new WebHostBuilder()
-                .UseStartup<InMemoryDbEndpointStartup>());
+            var host = await new HostBuilder()
+                .UseServiceProviderFactory(new AutofacServiceProviderFactory())
+                .ConfigureWebHost(webBuilder =>
+                {
+                    webBuilder
+                        .UseTestServer()
+                        .UseStartup<InMemoryDbEndpointStartup>();
+                })
+                .StartAsync();
+
+            _server = host.GetTestServer();
         }
 
         [Test]

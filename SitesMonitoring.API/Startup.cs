@@ -7,12 +7,11 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using SitesMonitoring.API.Authentication;
 using SitesMonitoring.API.Composition;
@@ -27,7 +26,7 @@ namespace SitesMonitoring.API
 {
     public class Startup
     {
-        public Startup(IHostingEnvironment env)
+        public Startup(IHostEnvironment env)
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
@@ -41,27 +40,32 @@ namespace SitesMonitoring.API
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
-            ConfigureMvc(services);
-            
             services.Configure<AppConfig>(Configuration.GetSection("AppConfig"));
+
+            AddControllers(services);
 
             const string basicAuthentication = "BasicAuthentication";
             services.AddAuthentication(basicAuthentication)
                 .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(basicAuthentication, null);
+            services.AddAuthorization();
             
             services.AddHostedService<MonitoringHostedService>();
 
             ConfigureMapping(services);
 
             ConfigureDb(services);
-
-            return ConfigureDependencyInjection<CompositionRoot>(services);
         }
         
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            // Register your own things directly with Autofac, like:
+            builder.RegisterModule(new CompositionRoot());
+        }
+        
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline. 
+        public void Configure(IApplicationBuilder app, IHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -74,15 +78,20 @@ namespace SitesMonitoring.API
 
             app.UseExceptionHandler(errorApp => { errorApp.Run(HandleErrors); });
             app.UseHttpsRedirection();
-            app.UseAuthentication();
-            app.UseMvc();
+
+            app.UseRouting();
             
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+
             MigrateDatabaseOnStartup(app);
         }
-        
-        protected virtual void ConfigureMvc(IServiceCollection services)
+
+        protected virtual void AddControllers(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddControllers();
         }
 
         protected virtual void ConfigureDb(IServiceCollection services)
