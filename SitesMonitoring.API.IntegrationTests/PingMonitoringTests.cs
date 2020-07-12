@@ -14,9 +14,7 @@ namespace SitesMonitoring.API.IntegrationTests
     public class PingMonitoringTests
     {
         private const string EndpointUrl = "api/sites/1/pingmonitoring";
-        private const string AuthenticationScheme = "Basic";
-        private const string AuthenticationParameter = "YWRtaW46cGFzc3dvcmQ=";
-        
+
         private TestServer _server;
 
         [OneTimeSetUp]
@@ -36,23 +34,10 @@ namespace SitesMonitoring.API.IntegrationTests
         }
 
         [Test]
-        public async Task GetAll_NoCredentialsProvided_UnauthorizedResponse()
+        public async Task GetAll_SiteNotExist_NotFoundResponse()
         {
             // Arrange
-            var client = GetUnauthenticatedClient();
-            
-            // Act
-            var response = await client.GetAsync(EndpointUrl);
-            
-            // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
-        }
-        
-        [Test]
-        public async Task GetAll_ValidCredentialsProvidedButSiteNotExist_NotFoundResponse()
-        {
-            // Arrange
-            var client = GetAuthenticatedClient();
+            var client = _server.CreateClient();
 
             // Act
             var response = await client.GetAsync(EndpointUrl);
@@ -60,21 +45,7 @@ namespace SitesMonitoring.API.IntegrationTests
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
-        
-        // todo other tests
-        
-        private HttpClient GetUnauthenticatedClient()
-        {
-            return _server.CreateClient();
-        }
-        
-        private HttpClient GetAuthenticatedClient()
-        {
-            var client = _server.CreateClient();
-            client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue(AuthenticationScheme, AuthenticationParameter);
 
-            return client;
-        }
+        // todo other tests
     }
 }

@@ -4,7 +4,6 @@ using Autofac;
 using Autofac.Core;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
@@ -13,8 +12,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
-using SitesMonitoring.API.Authentication;
-using SitesMonitoring.API.Composition;
 using SitesMonitoring.API.HostedServices;
 using SitesMonitoring.API.Mapping;
 using SitesMonitoring.API.Models;
@@ -46,43 +43,24 @@ namespace SitesMonitoring.API
 
             AddControllers(services);
 
-            const string basicAuthentication = "BasicAuthentication";
-            services.AddAuthentication(basicAuthentication)
-                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(basicAuthentication, null);
-            services.AddAuthorization();
-            
             services.AddHostedService<MonitoringHostedService>();
 
             ConfigureMapping(services);
 
             ConfigureDb(services);
         }
-        
-        public void ConfigureContainer(ContainerBuilder builder)
-        {
-            // Register your own things directly with Autofac, like:
-            builder.RegisterModule(new CompositionRoot());
-        }
-        
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline. 
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                app.UseHsts();
-            }
 
             app.UseExceptionHandler(errorApp => { errorApp.Run(HandleErrors); });
-            app.UseHttpsRedirection();
 
             app.UseRouting();
-            
-            app.UseAuthentication();
-            app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
@@ -98,7 +76,7 @@ namespace SitesMonitoring.API
         {
             services.AddDbContext<SitesMonitoringDbContext>();
         }
-        
+
         protected virtual void MigrateDatabaseOnStartup(IApplicationBuilder app)
         {
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
@@ -106,6 +84,15 @@ namespace SitesMonitoring.API
                 var context = serviceScope.ServiceProvider.GetRequiredService<SitesMonitoringDbContext>();
                 context.Database.Migrate();
             }
+        }
+
+        private static IServiceProvider ConfigureDependencyInjection<T>(IServiceCollection services) where T : IModule, new()
+        {
+            var containerBuilder = new ContainerBuilder();
+            containerBuilder.RegisterModule<T>();
+            containerBuilder.Populate(services);
+            var container = containerBuilder.Build();
+            return new AutofacServiceProvider(container);
         }
 
         private static void ConfigureMapping(IServiceCollection services)
@@ -119,15 +106,6 @@ namespace SitesMonitoring.API
             services.AddSingleton(mapper);
         }
 
-        private static IServiceProvider ConfigureDependencyInjection<T>(IServiceCollection services) where T : IModule, new()
-        {
-            var containerBuilder = new ContainerBuilder();
-            containerBuilder.RegisterModule<T>();
-            containerBuilder.Populate(services);
-            var container = containerBuilder.Build();
-            return new AutofacServiceProvider(container);
-        }
-        
         private static async Task HandleErrors(HttpContext context)
         {
             context.Response.ContentType = "application/json";
@@ -146,7 +124,7 @@ namespace SitesMonitoring.API
                 default:
                     await CreateErrorResult(context, "Internal server error", 500);
                     break;
-            } 
+            }
         }
 
         private static async Task CreateErrorResult(HttpContext context, string errorMessage, int statusCode)
@@ -155,10 +133,10 @@ namespace SitesMonitoring.API
 
             var result = JsonConvert.SerializeObject(
                 new GenericErrorsResultModel {Errors = new[] {errorMessage}});
-                    
+
             await context.Response.WriteAsync(result);
         }
-        
+
         private static void CreateErrorResult(HttpContext context, int statusCode)
         {
             context.Response.StatusCode = statusCode;

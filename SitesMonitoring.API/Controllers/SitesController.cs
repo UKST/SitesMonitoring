@@ -11,12 +11,11 @@ namespace SitesMonitoring.API.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class SitesController : ControllerBase
     {
         private readonly ISitesService _sitesService;
         private readonly IMapper _mapper;
-        
+
         public SitesController(
             ISitesService sitesService,
             IMapper mapper)
@@ -24,7 +23,7 @@ namespace SitesMonitoring.API.Controllers
             _sitesService = sitesService;
             _mapper = mapper;
         }
-        
+
         [HttpPost]
         public ActionResult<SiteResultModel> Post([FromBody] SitePostModel model)
         {

@@ -13,12 +13,11 @@ namespace SitesMonitoring.API.Controllers
     /// </summary>
     [Route("api/sites/{siteId}/[controller]")]
     [ApiController]
-    [Authorize]
     public class PingMonitoringController : ControllerBase
     {
         private readonly IMonitoringService _monitoringService;
         private readonly IMapper _mapper;
-        
+
         public PingMonitoringController(
             IMonitoringService monitoringService,
             IMapper mapper)
@@ -26,27 +25,27 @@ namespace SitesMonitoring.API.Controllers
             _monitoringService = monitoringService;
             _mapper = mapper;
         }
-        
+
         [HttpGet]
         public ActionResult<ICollection<PingMonitoringEntityResultModel>> GetAll(int siteId)
         {
             var result = _monitoringService.GetAllEntities(siteId);
-            
+
             return Ok(_mapper.Map<ICollection<PingMonitoringEntityResultModel>>(result));
         }
-        
+
         [HttpPost]
         public PingMonitoringEntityResultModel Post(int siteId, [FromBody] PingMonitoringEntityPostModel model)
         {
             var entity = _mapper.Map<PingMonitoringEntityPostModel, MonitoringEntity>(model,
                 options => options.AfterMap(
                     (s, d) => { d.SiteId = siteId; }));
-            
+
             var result = _monitoringService.CreateEntity(entity);
-            
+
             return _mapper.Map<PingMonitoringEntityResultModel>(result);
         }
-        
+
         [HttpDelete("{entityId}")]
         public void Delete(int siteId, int entityId)
         {
