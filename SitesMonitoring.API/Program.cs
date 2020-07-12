@@ -1,7 +1,9 @@
-﻿using Autofac.Extensions.DependencyInjection;
+﻿using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using SitesMonitoring.API.Composition;
 
 namespace SitesMonitoring.API
 {
@@ -16,7 +18,8 @@ namespace SitesMonitoring.API
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .UseServiceProviderFactory(new AutofacServiceProviderFactory())
+                .UseServiceProviderFactory(
+                    new AutofacServiceProviderFactory(builder => builder.RegisterModule<CompositionRoot>()))
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder

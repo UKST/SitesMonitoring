@@ -1,5 +1,7 @@
 using System.Net.NetworkInformation;
 using Autofac;
+using Microsoft.Extensions.Hosting;
+using SitesMonitoring.API.HostedServices;
 using SitesMonitoring.BLL.Data;
 using SitesMonitoring.BLL.Monitoring;
 using SitesMonitoring.BLL.Monitoring.MonitoringWorker;
@@ -18,7 +20,7 @@ namespace SitesMonitoring.API.Composition
             RegisterServices(builder);
 
             RegisterKeyedServices(builder);
-            
+
             RegisterRepositories(builder);
         }
 
@@ -41,7 +43,7 @@ namespace SitesMonitoring.API.Composition
                 .As<IMonitoringProcess>()
                 .WithMetadata<MonitoringProcessMetadata>(configuration =>
                     configuration.For(m => m.Type, MonitoringType.Ping)).InstancePerLifetimeScope();
-            
+
             // replace with metadata or keyed service approach if statistic based on different monitors will be required
             builder.RegisterType<PingHealthStatusMapper>().As<IHealthStatusMapper>().InstancePerLifetimeScope();
             builder.RegisterType<LastPingSiteHealthCalculationStrategy>().As<ISiteHealthCalculationStrategy>()
@@ -49,14 +51,14 @@ namespace SitesMonitoring.API.Composition
             builder.RegisterType<PingMonitoringValidator>().As<IMonitoringValidator>()
                 .InstancePerLifetimeScope();
         }
-              
+
         private static void RegisterRepositories(ContainerBuilder builder)
         {
             builder.RegisterType<MonitoringEntityRepository>().As<IMonitoringEntityRepository>()
                 .InstancePerLifetimeScope();
             builder.RegisterType<MonitoringResultRepository>().As<IMonitoringResultRepository>()
-                .InstancePerLifetimeScope();            
+                .InstancePerLifetimeScope();
             builder.RegisterType<Repository<Site>>().As<IRepository<Site>>().InstancePerLifetimeScope();
-        } 
+        }
     }
 }

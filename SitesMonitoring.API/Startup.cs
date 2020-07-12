@@ -86,15 +86,6 @@ namespace SitesMonitoring.API
             }
         }
 
-        private static IServiceProvider ConfigureDependencyInjection<T>(IServiceCollection services) where T : IModule, new()
-        {
-            var containerBuilder = new ContainerBuilder();
-            containerBuilder.RegisterModule<T>();
-            containerBuilder.Populate(services);
-            var container = containerBuilder.Build();
-            return new AutofacServiceProvider(container);
-        }
-
         private static void ConfigureMapping(IServiceCollection services)
         {
             var mappingConfig = new MapperConfiguration(mc =>
