@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
+using SitesMonitoring.API.Composition;
 using SitesMonitoring.API.HostedServices;
 using SitesMonitoring.API.Mapping;
 using SitesMonitoring.API.Models;
@@ -48,6 +49,11 @@ namespace SitesMonitoring.API
             ConfigureMapping(services);
 
             ConfigureDb(services);
+        }
+
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            builder.RegisterModule<CompositionRoot>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

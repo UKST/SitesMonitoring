@@ -18,8 +18,7 @@ namespace SitesMonitoring.API
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .UseServiceProviderFactory(
-                    new AutofacServiceProviderFactory(builder => builder.RegisterModule<CompositionRoot>()))
+                .UseServiceProviderFactory(new AutofacServiceProviderFactory())
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder
