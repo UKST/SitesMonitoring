@@ -11,7 +11,9 @@ namespace SitesMonitoring.DAL
 
         public MonitoringResult GetLast(long monitoringEntityId)
         {
-            return Db.MonitoringResults.LastOrDefault(i => i.MonitoringEntityId == monitoringEntityId);
+            return Db.MonitoringResults
+                .OrderByDescending(i => i.Id)
+                .FirstOrDefault(i => i.MonitoringEntityId == monitoringEntityId);
         }
     }
 }
