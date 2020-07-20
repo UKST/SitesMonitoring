@@ -19,10 +19,12 @@ namespace SitesMonitoring.BLL.Monitoring.StatisticAPI
             _monitoringEntityRepository = monitoringEntityRepository;
             _healthStatusMapper = healthStatusMapper;
         }
-        
+
         public SiteHealth GetHealth(Site site)
         {
-            var monitoringEntities = _monitoringEntityRepository.GetBySiteId(site.Id).Where(i => i.Type == MonitoringType.Ping);
+            var monitoringEntities = _monitoringEntityRepository.GetBySiteId(site.Id)
+                .Where(i => i.Type == MonitoringType.Ping)
+                .ToArray();
             var siteHealthResults = monitoringEntities
                 .Select(monitoringEntity => _monitoringResultRepository.GetLast(monitoringEntity.Id))
                 .Where(monitoringResult => monitoringResult != null)
