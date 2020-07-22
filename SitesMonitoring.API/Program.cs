@@ -3,6 +3,7 @@ using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using SitesMonitoring.API.Composition;
 
 namespace SitesMonitoring.API
@@ -19,6 +20,7 @@ namespace SitesMonitoring.API
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .UseServiceProviderFactory(new AutofacServiceProviderFactory())
+                .ConfigureLogging(builder => builder.AddConsole())
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder

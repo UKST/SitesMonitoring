@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SitesMonitoring.API.Composition;
 using SitesMonitoring.API.HostedServices;
@@ -42,6 +43,8 @@ namespace SitesMonitoring.API
         {
             services.Configure<AppConfig>(Configuration.GetSection("AppConfig"));
 
+            services.AddLogging();
+
             AddControllers(services);
 
             services.AddHostedService<MonitoringHostedService>();
@@ -57,8 +60,10 @@ namespace SitesMonitoring.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostEnvironment env, ILogger<Startup> logger)
         {
+            logger.LogInformation("Configuration started");
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -70,7 +75,11 @@ namespace SitesMonitoring.API
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
+            logger.LogInformation("Db migration executing...");
+
             MigrateDatabaseOnStartup(app);
+
+            logger.LogInformation("Configuration finished");
         }
 
         protected virtual void AddControllers(IServiceCollection services)
