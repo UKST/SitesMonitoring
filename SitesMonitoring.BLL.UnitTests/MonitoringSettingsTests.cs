@@ -1,7 +1,7 @@
 using System.Linq;
 using FluentAssertions;
-using NUnit.Framework;
 using SitesMonitoring.BLL.Monitoring;
+using Xunit;
 
 namespace SitesMonitoring.BLL.UnitTests
 {
@@ -9,17 +9,17 @@ namespace SitesMonitoring.BLL.UnitTests
     {
         private const int MinutesInHour = 60;
         private const int HoursInDay = 24;
-        
+
         private readonly MonitoringSettings _monitoringSettings = new MonitoringSettings();
 
-        [Test]
+        [Fact]
         public void AvailableMonitoringPeriodsInMinutes_ShouldHaveMoreThanOneItem()
         {
             // Assert
             _monitoringSettings.AvailableMonitoringPeriodsInMinutes.Count.Should().BeGreaterOrEqualTo(1);
         }
-        
-        [Test]
+
+        [Fact]
         public void AvailableMonitoringPeriodsInMinutes_ShouldBeMoreOrEqualThan1AndLessThan60()
         {
             // Arrange
@@ -29,8 +29,8 @@ namespace SitesMonitoring.BLL.UnitTests
             // Assert
             totalPeriodsCount.Should().Be(expectedPeriods.Count());
         }
-        
-        [Test]
+
+        [Fact]
         public void AvailableMonitoringPeriodsInMinutes_ShouldBeAnIntegerPartOfHour()
         {
             // Arrange
@@ -40,15 +40,15 @@ namespace SitesMonitoring.BLL.UnitTests
             // Assert
             totalPeriodsCount.Should().Be(expectedPeriods.Count());
         }
-        
-        [Test]
+
+        [Fact]
         public void AvailableMonitoringPeriodsInHours_ShouldHaveMoreThanOneItem()
         {
             // Assert
             _monitoringSettings.AvailableMonitoringPeriodsInHours.Count.Should().BeGreaterOrEqualTo(1);
         }
-        
-        [Test]
+
+        [Fact]
         public void AvailableMonitoringPeriodsInHours_ShouldBeMoreOrEqualThan1AndLessOrEqualThan24()
         {
             // Arrange
@@ -58,8 +58,8 @@ namespace SitesMonitoring.BLL.UnitTests
             // Assert
             totalPeriodsCount.Should().Be(expectedPeriods.Count());
         }
-        
-        [Test]
+
+        [Fact]
         public void AvailableMonitoringPeriodsInHours_ShouldBeAnIntegerPartOfDay()
         {
             // Arrange
@@ -69,7 +69,7 @@ namespace SitesMonitoring.BLL.UnitTests
             // Assert
             totalPeriodsCount.Should().Be(expectedPeriods.Count());
         }
-        
+
         // todo other tests
     }
 }

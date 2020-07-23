@@ -1,11 +1,10 @@
 using System;
-using System.Linq;
 using FluentAssertions;
 using Moq;
-using NUnit.Framework;
 using SitesMonitoring.BLL.Monitoring;
 using SitesMonitoring.BLL.Monitoring.MonitoringWorker;
 using SitesMonitoring.BLL.Utils;
+using Xunit;
 
 namespace SitesMonitoring.BLL.UnitTests
 {
@@ -13,14 +12,13 @@ namespace SitesMonitoring.BLL.UnitTests
     {
         private const int DefaultMonitoringPeriodInMinutes = 5;
         private readonly DateTime _now = new DateTime(2019, 1, 1);
-        
-        private MonitoringPeriodsProvider _monitoringPeriodsProvider;
-        
-        private Mock<IMonitoringSettings> _monitoringSettingsMock;
-        private Mock<IDateTimeProvider> _dateTimeProviderMock;
-        
-        [SetUp]
-        public void Init()
+
+        private readonly MonitoringPeriodsProvider _monitoringPeriodsProvider;
+
+        private readonly Mock<IMonitoringSettings> _monitoringSettingsMock;
+        private readonly Mock<IDateTimeProvider> _dateTimeProviderMock;
+
+        public MonitoringPeriodsProviderTests()
         {
             _monitoringSettingsMock = new Mock<IMonitoringSettings>();
             _dateTimeProviderMock = new Mock<IDateTimeProvider>();
@@ -30,7 +28,7 @@ namespace SitesMonitoring.BLL.UnitTests
                 _dateTimeProviderMock.Object);
         }
 
-        [Test]
+        [Fact]
         public void GetMonitoringStartDueTime_TimeRequiredToStart_MonitoringPeriodDueTime()
         {
             // Arrange
@@ -44,8 +42,8 @@ namespace SitesMonitoring.BLL.UnitTests
             // Assert
             dueTime.Should().Be(TimeSpan.FromMinutes(DefaultMonitoringPeriodInMinutes));
         }
-        
-        [Test]
+
+        [Fact]
         public void GetMonitoringStartDueTime_NoMonitoringPeriods_InfiniteDueTime()
         {
             // Arrange
