@@ -1,43 +1,33 @@
+using System;
 using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Autofac.Extensions.DependencyInjection;
 using FluentAssertions;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.Hosting;
-using NUnit.Framework;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Xunit;
 
 namespace SitesMonitoring.API.IntegrationTests
 {
-    public class PingMonitoringTests
+    public class PingMonitoringTests : IDisposable
     {
         private const string EndpointUrl = "api/sites/1/pingmonitoring";
 
-        private TestServer _server;
+        private readonly WebApplicationFactory<Startup> _webApplicationFactory;
 
-        [OneTimeSetUp]
-        public async Task SetUp()
+        public PingMonitoringTests()
         {
-            var host = await new HostBuilder()
-                .UseServiceProviderFactory(new AutofacServiceProviderFactory())
-                .ConfigureWebHost(webBuilder =>
-                {
-                    webBuilder
-                        .UseTestServer()
-                        .UseStartup<InMemoryDbEndpointStartup>();
-                })
-                .StartAsync();
-
-            _server = host.GetTestServer();
+            _webApplicationFactory = new InMemoryWebApplicationFactory<Startup>();
         }
 
-        [Test]
+        public void Dispose()
+        {
+            _webApplicationFactory.Dispose();
+        }
+
+        [Fact]
         public async Task GetAll_SiteNotExist_NotFoundResponse()
         {
             // Arrange
-            var client = _server.CreateClient();
+            var client = _webApplicationFactory.CreateClient();
 
             // Act
             var response = await client.GetAsync(EndpointUrl);

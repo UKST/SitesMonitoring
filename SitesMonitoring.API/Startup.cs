@@ -1,8 +1,5 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Autofac;
-using Autofac.Core;
-using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
@@ -45,13 +42,13 @@ namespace SitesMonitoring.API
 
             services.AddLogging();
 
-            AddControllers(services);
+            services.AddControllers();
 
             services.AddHostedService<MonitoringHostedService>();
 
             ConfigureMapping(services);
 
-            ConfigureDb(services);
+            services.AddDbContext<SitesMonitoringDbContext>();
         }
 
         public void ConfigureContainer(ContainerBuilder builder)
@@ -82,21 +79,13 @@ namespace SitesMonitoring.API
             logger.LogInformation("Configuration finished");
         }
 
-        protected virtual void AddControllers(IServiceCollection services)
+        private static void MigrateDatabaseOnStartup(IApplicationBuilder app)
         {
-            services.AddControllers();
-        }
+            using var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope();
+            var context = serviceScope.ServiceProvider.GetRequiredService<SitesMonitoringDbContext>();
 
-        protected virtual void ConfigureDb(IServiceCollection services)
-        {
-            services.AddDbContext<SitesMonitoringDbContext>();
-        }
-
-        protected virtual void MigrateDatabaseOnStartup(IApplicationBuilder app)
-        {
-            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            if (context.Database.IsNpgsql())
             {
-                var context = serviceScope.ServiceProvider.GetRequiredService<SitesMonitoringDbContext>();
                 context.Database.Migrate();
             }
         }
