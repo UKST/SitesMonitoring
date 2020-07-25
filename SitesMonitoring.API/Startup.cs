@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Autofac;
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Polly;
 using SitesMonitoring.API.Composition;
 using SitesMonitoring.API.HostedServices;
 using SitesMonitoring.API.Mapping;
@@ -74,20 +76,36 @@ namespace SitesMonitoring.API
 
             logger.LogInformation("Db migration executing...");
 
-            MigrateDatabaseOnStartup(app);
+            MigrateDatabaseOnStartup(app, logger);
 
             logger.LogInformation("Configuration finished");
         }
 
-        private static void MigrateDatabaseOnStartup(IApplicationBuilder app)
+        private static void MigrateDatabaseOnStartup(IApplicationBuilder app, ILogger<Startup> logger)
         {
-            using var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope();
-            var context = serviceScope.ServiceProvider.GetRequiredService<SitesMonitoringDbContext>();
+            const int retryAmount = 10;
 
-            if (context.Database.IsNpgsql())
-            {
-                context.Database.Migrate();
-            }
+            Policy
+                .Handle<Exception>()
+                .WaitAndRetry(
+                    retryAmount,
+                    retryAttempt => TimeSpan.FromSeconds(retryAttempt),
+                    (exception, span) =>
+                    {
+                        logger.LogError(exception, "Error during database migration");
+                    })
+                .Execute(() =>
+                {
+                    logger.LogInformation("Try to migrate database");
+
+                    using var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope();
+                    var context = serviceScope.ServiceProvider.GetRequiredService<SitesMonitoringDbContext>();
+
+                    if (context.Database.IsNpgsql())
+                    {
+                        context.Database.Migrate();
+                    }
+                });
         }
 
         private static void ConfigureMapping(IServiceCollection services)
