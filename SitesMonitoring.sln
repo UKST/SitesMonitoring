@@ -20,6 +20,8 @@ ProjectSection(SolutionItems) = preProject
 	.dockerignore = .dockerignore
 EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SitesMonitoring.Utils.Http", "SitesMonitoring.Utils.Http\SitesMonitoring.Utils.Http.csproj", "{DBFF3438-76C5-4FF7-BDC0-05A9A6F6AF5A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,6 +48,10 @@ Global
 		{5A175B43-9F01-4D37-A86A-456AAB1F937D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A175B43-9F01-4D37-A86A-456AAB1F937D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A175B43-9F01-4D37-A86A-456AAB1F937D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBFF3438-76C5-4FF7-BDC0-05A9A6F6AF5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBFF3438-76C5-4FF7-BDC0-05A9A6F6AF5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBFF3438-76C5-4FF7-BDC0-05A9A6F6AF5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBFF3438-76C5-4FF7-BDC0-05A9A6F6AF5A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

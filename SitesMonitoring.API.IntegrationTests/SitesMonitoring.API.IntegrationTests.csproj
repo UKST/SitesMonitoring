@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SitesMonitoring.API\SitesMonitoring.API.csproj" />
+    <ProjectReference Include="..\SitesMonitoring.Utils.Http\SitesMonitoring.Utils.Http.csproj" />
   </ItemGroup>
 
 </Project>
