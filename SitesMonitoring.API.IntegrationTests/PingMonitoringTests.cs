@@ -122,6 +122,34 @@ namespace SitesMonitoring.API.IntegrationTests
             }
         }
 
+
+        [Fact]
+        public async Task ShouldDeleteMonitoringEntity_WhenDeleteRequest()
+        {
+            // Arrange
+            var client = _webApplicationFactory.CreateClient();
+            var dbContext = _webApplicationFactory.Services.GetService<SitesMonitoringDbContext>();
+
+            var site = CreateSiteWithMonitoringEntity();
+            var monitoringEntity = site.MonitoringEntities.Single();
+
+            await dbContext.Sites.AddAsync(site);
+            await dbContext.SaveChangesAsync();
+
+            // Act
+            var response = await client.SendAsync(
+                new HttpRequestMessage(HttpMethod.Delete, $"{EndpointUrl(site.Id)}/{monitoringEntity.Id}"));
+
+            // Assert
+            using (new AssertionScope())
+            {
+                response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+                var entity = await dbContext.MonitoringEntities.FirstOrDefaultAsync(i => i.Id == monitoringEntity.Id);
+                entity.Should().BeNull();
+            }
+        }
+
         private static Site CreateSiteWithMonitoringEntity()
         {
             return new Site

@@ -1,9 +1,9 @@
 using System.Collections.Generic;
+using MediatR;
 
 namespace SitesMonitoring.BLL.Monitoring.StatisticAPI
 {
-    public interface ISitesStatisticService
+    public class GetStatisticsQuery : IRequest<ICollection<SiteStatistic>>
     {
-        ICollection<SiteStatistic> GetStatistics();
     }
 }

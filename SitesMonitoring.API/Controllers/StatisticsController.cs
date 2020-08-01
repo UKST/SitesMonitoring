@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SitesMonitoring.API.Models.Statistics;
 using SitesMonitoring.BLL.Monitoring.StatisticAPI;
@@ -10,23 +12,20 @@ namespace SitesMonitoring.API.Controllers
     [ApiController]
     public class StatisticsController : ControllerBase
     {
-        private readonly ISitesStatisticService _sitesStatisticService;
         private readonly IMapper _mapper;
-        
+        private readonly IMediator _mediator;
+
         public StatisticsController(
-            ISitesStatisticService sitesStatisticService,
-            IMapper mapper)
+            IMapper mapper,
+            IMediator mediator)
         {
-            _sitesStatisticService = sitesStatisticService;
             _mapper = mapper;
+            _mediator = mediator;
         }
-        
+
         [HttpGet]
-        public ActionResult<ICollection<SiteStatisticResultModel>> GetAll()
-        {
-            var result = _sitesStatisticService.GetStatistics();
-            
-            return Ok(_mapper.Map<ICollection<SiteStatisticResultModel>>(result));
-        }
+        public async Task<ICollection<SiteStatisticResultModel>> GetAll()
+            => _mapper.Map<ICollection<SiteStatisticResultModel>>(
+                await _mediator.Send(new GetStatisticsQuery()));
     }
 }

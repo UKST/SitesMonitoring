@@ -1,10 +1,13 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using SitesMonitoring.API.Mapping;
 using SitesMonitoring.API.Models.PingMonitoring;
 using SitesMonitoring.BLL.Monitoring;
+using SitesMonitoring.BLL.Monitoring.PingMonitoringAPI;
+using SitesMonitoring.BLL.Monitoring.PingMonitoringAPI.Get;
+using SitesMonitoring.BLL.Monitoring.PingMonitoringAPI.Remove;
 
 namespace SitesMonitoring.API.Controllers
 {
@@ -15,41 +18,32 @@ namespace SitesMonitoring.API.Controllers
     [ApiController]
     public class PingMonitoringController : ControllerBase
     {
-        private readonly IMonitoringService _monitoringService;
+        private readonly IMediator _mediator;
         private readonly IMapper _mapper;
 
         public PingMonitoringController(
-            IMonitoringService monitoringService,
+            IMediator mediator,
             IMapper mapper)
         {
-            _monitoringService = monitoringService;
+            _mediator = mediator;
             _mapper = mapper;
         }
 
         [HttpGet]
-        public ActionResult<ICollection<PingMonitoringEntityResultModel>> GetAll(int siteId)
-        {
-            var result = _monitoringService.GetAllEntities(siteId);
-
-            return Ok(_mapper.Map<ICollection<PingMonitoringEntityResultModel>>(result));
-        }
+        public async Task<ICollection<PingMonitoringEntityResultModel>> GetAll(long siteId)
+            => _mapper.Map<ICollection<PingMonitoringEntityResultModel>>(
+                await _mediator.Send(new GetPingMonitoringEntitiesQuery(siteId)));
 
         [HttpPost]
-        public PingMonitoringEntityResultModel Post(int siteId, [FromBody] PingMonitoringEntityPostModel model)
-        {
-            var entity = _mapper.Map<PingMonitoringEntityPostModel, MonitoringEntity>(model,
-                options => options.AfterMap(
-                    (s, d) => { d.SiteId = siteId; }));
-
-            var result = _monitoringService.CreateEntity(entity);
-
-            return _mapper.Map<PingMonitoringEntityResultModel>(result);
-        }
+        public async Task<PingMonitoringEntityResultModel> Post(int siteId, [FromBody] PingMonitoringEntityPostModel model)
+            => _mapper.Map<PingMonitoringEntityResultModel>(
+                await _mediator.Send(new CreatePingMonitoringEntityCommand(
+                    _mapper.Map<PingMonitoringEntityPostModel, MonitoringEntity>(model,
+                        options => options.AfterMap(
+                            (s, d) => { d.SiteId = siteId; })))));
 
         [HttpDelete("{entityId}")]
-        public void Delete(int siteId, int entityId)
-        {
-            _monitoringService.RemoveEntity(siteId, entityId);
-        }
+        public async Task Delete(int siteId, int entityId)
+            => await _mediator.Send(new RemoveMonitoringEntityCommand(siteId, entityId));
     }
 }

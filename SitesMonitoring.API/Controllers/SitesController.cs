@@ -1,4 +1,6 @@
+using System.Threading.Tasks;
 using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SitesMonitoring.API.Models.Sites;
@@ -13,24 +15,21 @@ namespace SitesMonitoring.API.Controllers
     [ApiController]
     public class SitesController : ControllerBase
     {
-        private readonly ISitesService _sitesService;
         private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
         public SitesController(
-            ISitesService sitesService,
-            IMapper mapper)
+            IMapper mapper,
+            IMediator mediator)
         {
-            _sitesService = sitesService;
             _mapper = mapper;
+            _mediator = mediator;
         }
 
         [HttpPost]
-        public ActionResult<SiteResultModel> Post([FromBody] SitePostModel model)
-        {
-            var entity = _mapper.Map<Site>(model);
-            var result = _sitesService.CreateSite(entity);
-
-            return _mapper.Map<SiteResultModel>(result);
-        }
+        public async Task<SiteResultModel> Post([FromBody] SitePostModel model)
+        => _mapper.Map<SiteResultModel>(
+            await _mediator.Send(new CreateSiteCommand(
+                _mapper.Map<Site>(model))));
     }
 }
