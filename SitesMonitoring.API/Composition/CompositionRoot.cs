@@ -7,6 +7,7 @@ using SitesMonitoring.BLL.Data;
 using SitesMonitoring.BLL.Monitoring;
 using SitesMonitoring.BLL.Monitoring.MonitoringWorker;
 using SitesMonitoring.BLL.Monitoring.PingMonitoringAPI;
+using SitesMonitoring.BLL.Monitoring.PingMonitoringAPI.Create;
 using SitesMonitoring.BLL.Monitoring.PingMonitoringAPI.Get;
 using SitesMonitoring.BLL.Monitoring.PingMonitoringAPI.Remove;
 using SitesMonitoring.BLL.Monitoring.SitesAPI;

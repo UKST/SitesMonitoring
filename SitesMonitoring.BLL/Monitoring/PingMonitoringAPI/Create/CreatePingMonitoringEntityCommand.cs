@@ -1,6 +1,6 @@
 using MediatR;
 
-namespace SitesMonitoring.BLL.Monitoring.PingMonitoringAPI
+namespace SitesMonitoring.BLL.Monitoring.PingMonitoringAPI.Create
 {
     public class CreatePingMonitoringEntityCommand : IRequest<MonitoringEntity>
     {

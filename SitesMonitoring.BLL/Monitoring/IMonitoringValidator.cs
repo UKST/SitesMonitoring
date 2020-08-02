@@ -1,8 +1,10 @@
+using System.Threading.Tasks;
+
 namespace SitesMonitoring.BLL.Monitoring
 {
     public interface IMonitoringValidator
     {
-        void ValidateEntity(MonitoringEntity entity);
-        void ValidateSiteExistence(long siteId);
+        Task ValidateEntityAsync(MonitoringEntity entity);
+        Task ValidateSiteExistenceAsync(long siteId);
     }
 }

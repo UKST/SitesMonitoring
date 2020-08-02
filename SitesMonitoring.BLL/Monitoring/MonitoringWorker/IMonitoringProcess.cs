@@ -1,7 +1,9 @@
+using System.Threading.Tasks;
+
 namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
 {
     public interface IMonitoringProcess
     {
-        void Start(MonitoringEntity entity);
+        Task StartAsync(MonitoringEntity entity);
     }
 }

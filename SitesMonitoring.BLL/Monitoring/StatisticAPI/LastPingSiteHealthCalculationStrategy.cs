@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using SitesMonitoring.BLL.Monitoring.SitesAPI;
 
 namespace SitesMonitoring.BLL.Monitoring.StatisticAPI
@@ -20,16 +21,23 @@ namespace SitesMonitoring.BLL.Monitoring.StatisticAPI
             _healthStatusMapper = healthStatusMapper;
         }
 
-        public SiteHealth GetHealth(Site site)
+        public async Task<SiteHealth> GetHealthAsync(Site site)
         {
-            var monitoringEntities = _monitoringEntityRepository.GetBySiteId(site.Id)
+            // todo optimize query - separate repository / strategy to retrieve data for current method
+            var monitoringEntities = (await _monitoringEntityRepository.GetBySiteIdAsync(site.Id))
                 .Where(i => i.Type == MonitoringType.Ping)
                 .ToArray();
-            var siteHealthResults = monitoringEntities
-                .Select(monitoringEntity => _monitoringResultRepository.GetLast(monitoringEntity.Id))
-                .Where(monitoringResult => monitoringResult != null)
-                .Select(_healthStatusMapper.Map)
-                .ToList();
+            var siteHealthResults = new List<SiteHealth>();
+
+            foreach (var monitoringEntity in monitoringEntities)
+            {
+                var monitoringResult = await _monitoringResultRepository.GetLastAsync(monitoringEntity.Id);
+
+                if (monitoringResult != null)
+                {
+                    siteHealthResults.Add(_healthStatusMapper.Map(monitoringResult));
+                }
+            }
 
             if (siteHealthResults.Any(i => i == SiteHealth.Good) && siteHealthResults.Any(i => i == SiteHealth.Bad))
                 return SiteHealth.Normal;

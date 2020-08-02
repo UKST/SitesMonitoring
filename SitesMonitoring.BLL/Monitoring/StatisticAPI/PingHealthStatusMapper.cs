@@ -16,7 +16,7 @@ namespace SitesMonitoring.BLL.Monitoring.StatisticAPI
 
             var typedData = result.GetData<PingMonitoringResultData>();
 
-            return typedData.IPStatus == IPStatus.Success ? SiteHealth.Good : SiteHealth.Bad;
+            return typedData.IpStatus == IPStatus.Success ? SiteHealth.Good : SiteHealth.Bad;
         }
     }
 }

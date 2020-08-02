@@ -2,7 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 
-namespace SitesMonitoring.BLL.Monitoring.PingMonitoringAPI
+namespace SitesMonitoring.BLL.Monitoring.PingMonitoringAPI.Create
 {
     public class CreatePingMonitoringEntityCommandHandler : IRequestHandler<CreatePingMonitoringEntityCommand, MonitoringEntity>
     {
@@ -17,12 +17,12 @@ namespace SitesMonitoring.BLL.Monitoring.PingMonitoringAPI
             _monitoringEntityRepository = monitoringEntityRepository;
         }
 
-        public Task<MonitoringEntity> Handle(CreatePingMonitoringEntityCommand request, CancellationToken cancellationToken)
+        public async Task<MonitoringEntity> Handle(CreatePingMonitoringEntityCommand request, CancellationToken cancellationToken)
         {
-            _validator.ValidateEntity(request.Entity);
-            _monitoringEntityRepository.Create(request.Entity);
+             await _validator.ValidateEntityAsync(request.Entity);
+             await _monitoringEntityRepository.CreateAsync(request.Entity);
 
-            return Task.FromResult(request.Entity);
+            return request.Entity;
         }
     }
 }

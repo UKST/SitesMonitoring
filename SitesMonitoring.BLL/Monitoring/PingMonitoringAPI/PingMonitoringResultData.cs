@@ -4,6 +4,11 @@ namespace SitesMonitoring.BLL.Monitoring.PingMonitoringAPI
 {
     public class PingMonitoringResultData
     {
-        public IPStatus IPStatus { get; set; }
+        public IPStatus IpStatus { get; }
+
+        public PingMonitoringResultData(IPStatus ipStatus)
+        {
+            IpStatus = ipStatus;
+        }
     }
 }

@@ -71,10 +71,7 @@ namespace SitesMonitoring.API.IntegrationTests
                         {
                             new MonitoringResult
                             {
-                                Data = JsonConvert.SerializeObject(new PingMonitoringResultData
-                                {
-                                    IPStatus = IPStatus.Success
-                                })
+                                Data = JsonConvert.SerializeObject(new PingMonitoringResultData(IPStatus.Success))
                             }
                         }
                     }

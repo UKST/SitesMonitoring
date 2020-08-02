@@ -19,11 +19,11 @@ namespace SitesMonitoring.BLL.Monitoring.PingMonitoringAPI.Get
             _validator = validator;
         }
 
-        public Task<ICollection<MonitoringEntity>> Handle(GetPingMonitoringEntitiesQuery request, CancellationToken cancellationToken)
+        public async Task<ICollection<MonitoringEntity>> Handle(GetPingMonitoringEntitiesQuery request, CancellationToken cancellationToken)
         {
-            _validator.ValidateSiteExistence(request.SiteId);
+            await _validator.ValidateSiteExistenceAsync(request.SiteId);
 
-            return Task.FromResult<ICollection<MonitoringEntity>>(_monitoringEntityRepository.GetBySiteId(request.SiteId).ToArray());
+            return (await _monitoringEntityRepository.GetBySiteIdAsync(request.SiteId)).ToArray();
         }
     }
 }

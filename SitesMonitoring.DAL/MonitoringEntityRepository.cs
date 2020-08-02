@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using SitesMonitoring.BLL.Monitoring;
 
 namespace SitesMonitoring.DAL
@@ -10,14 +12,14 @@ namespace SitesMonitoring.DAL
         {
         }
 
-        public IEnumerable<MonitoringEntity> GetBySiteId(long siteId)
+        public async Task<IEnumerable<MonitoringEntity>> GetBySiteIdAsync(long siteId)
         {
-            return Db.MonitoringEntities.Where(i => i.SiteId == siteId);
+            return await Db.MonitoringEntities.Where(i => i.SiteId == siteId).ToArrayAsync();
         }
 
-        public IEnumerable<MonitoringEntity> GetByMonitoringPeriods(IEnumerable<int> periods)
+        public async Task<IEnumerable<MonitoringEntity>> GetByMonitoringPeriodsAsync(IEnumerable<int> periods)
         {
-            return Db.MonitoringEntities.Where(i => periods.Contains(i.PeriodInMinutes));
+            return await Db.MonitoringEntities.Where(i => periods.Contains(i.PeriodInMinutes)).ToArrayAsync();
         }
     }
 }

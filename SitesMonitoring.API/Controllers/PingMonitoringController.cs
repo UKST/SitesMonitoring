@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using SitesMonitoring.API.Models.PingMonitoring;
 using SitesMonitoring.BLL.Monitoring;
 using SitesMonitoring.BLL.Monitoring.PingMonitoringAPI;
+using SitesMonitoring.BLL.Monitoring.PingMonitoringAPI.Create;
 using SitesMonitoring.BLL.Monitoring.PingMonitoringAPI.Get;
 using SitesMonitoring.BLL.Monitoring.PingMonitoringAPI.Remove;
 

@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using SitesMonitoring.BLL.Utils;
 
 namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
 {
@@ -37,7 +37,7 @@ namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
             var dueTime = _monitoringPeriodsProvider.GetMonitoringStartDueTime();
 
             _timer = new Timer(
-                RunMonitoringProcesses,
+                async (state) => await RunMonitoringProcesses(),
                 null,
                 dueTime,
                 TimeSpan.FromMinutes(minMonitoringPeriod));
@@ -48,12 +48,12 @@ namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
             _timer.Change(Timeout.Infinite, 0);
         }
 
-        private void RunMonitoringProcesses(object state)
+        private async Task RunMonitoringProcesses()
         {
             try
             {
                 var periods = _monitoringPeriodsProvider.GetPeriodsOfMonitoringInMinutes();
-                var monitorEntries = _monitoringEntityRepository.GetByMonitoringPeriods(periods);
+                var monitorEntries = await _monitoringEntityRepository.GetByMonitoringPeriodsAsync(periods);
                 var sitesMonitors = monitorEntries.GroupBy(i => i.SiteId);
 
                 foreach (var siteMonitors in sitesMonitors)
@@ -66,7 +66,7 @@ namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
                             throw new NotImplementedException(
                                 $"There is no implementation of {nameof(IMonitoringProcess)} for {nameof(MonitoringType)}: {monitor.Type}");
 
-                        process.Value.Start(monitor);
+                        await process.Value.StartAsync(monitor);
                     }
                 }
             }

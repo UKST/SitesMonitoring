@@ -14,11 +14,11 @@ namespace SitesMonitoring.BLL.Monitoring.SitesAPI
             _siteRepository = siteRepository;
         }
 
-        public Task<Site> Handle(CreateSiteCommand request, CancellationToken cancellationToken)
+        public async Task<Site> Handle(CreateSiteCommand request, CancellationToken cancellationToken)
         {
-            _siteRepository.Create(request.Site);
+            await _siteRepository.CreateAsync(request.Site);
 
-            return Task.FromResult(request.Site);
+            return request.Site;
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using SitesMonitoring.BLL.Data;
 using SitesMonitoring.BLL.ErrorHandling;
 using SitesMonitoring.BLL.Monitoring.SitesAPI;
@@ -9,10 +10,10 @@ namespace SitesMonitoring.BLL.Monitoring.PingMonitoringAPI
     public sealed class PingMonitoringValidator : IMonitoringValidator
     {
         private const string ValidHostnameRegex = @"^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$";
-        
+
         private readonly IMonitoringSettings _monitoringSettings;
         private readonly IRepository<Site> _siteRepository;
-        
+
         public PingMonitoringValidator(
             IRepository<Site> siteRepository,
             IMonitoringSettings monitoringSettings)
@@ -20,14 +21,14 @@ namespace SitesMonitoring.BLL.Monitoring.PingMonitoringAPI
             _monitoringSettings = monitoringSettings;
             _siteRepository = siteRepository;
         }
-        
-        public void ValidateEntity(MonitoringEntity entity)
+
+        public async Task ValidateEntityAsync(MonitoringEntity entity)
         {
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
 
-            ValidateSiteExistence(entity.SiteId);
-            
+            await ValidateSiteExistenceAsync(entity.SiteId);
+
             if (entity.Type != MonitoringType.Ping)
                 throw new ArgumentException($"{nameof(entity)} must have {nameof(entity.Type)}: {MonitoringType.Ping}");
 
@@ -41,9 +42,9 @@ namespace SitesMonitoring.BLL.Monitoring.PingMonitoringAPI
                 throw new ApplicationValidationException($"{nameof(entity.Address)} should be valid DNS address");
         }
 
-        public void ValidateSiteExistence(long siteId)
+        public async Task ValidateSiteExistenceAsync(long siteId)
         {
-            var site = _siteRepository.GetById(siteId);
+            var site = await _siteRepository.GetByIdAsync(siteId);
 
             if (site == null)
                 throw new NotFoundException();

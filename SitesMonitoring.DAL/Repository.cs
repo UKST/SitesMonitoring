@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using SitesMonitoring.BLL.Data;
 
 namespace SitesMonitoring.DAL
@@ -13,27 +15,27 @@ namespace SitesMonitoring.DAL
         {
             Db = db;
         }
-        
-        public T GetById(long id)
+
+        public async Task<T> GetByIdAsync(long id)
         {
-            return Db.Set<T>().Find(id);
+            return await Db.Set<T>().FindAsync(id);
         }
 
-        public IEnumerable<T> GetAll()
+        public async Task<IEnumerable<T>> GetAllAsync()
         {
-            return Db.Set<T>().ToArray();
+            return await Db.Set<T>().ToArrayAsync();
         }
 
-        public void Create(T item)
+        public async Task CreateAsync(T item)
         {
-            Db.Set<T>().Add(item);
-            Db.SaveChanges(); // todo - move to UoW          
+            await Db.Set<T>().AddAsync(item);
+            await Db.SaveChangesAsync(); // todo - move to UoW
         }
 
-        public void Remove(T item)
+        public async Task RemoveAsync(T item)
         {
             Db.Set<T>().Remove(item);
-            Db.SaveChanges(); // todo - move to UoW
+            await Db.SaveChangesAsync(); // todo - move to UoW
         }
     }
 }

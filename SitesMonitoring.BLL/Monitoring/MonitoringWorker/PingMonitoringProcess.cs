@@ -1,4 +1,6 @@
 using System.Net.NetworkInformation;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using SitesMonitoring.BLL.Monitoring.PingMonitoringAPI;
 using SitesMonitoring.BLL.Utils;
 
@@ -6,40 +8,47 @@ namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
 {
     public class PingMonitoringProcess : IMonitoringProcess
     {
+        private readonly ILogger<PingMonitoringProcess> _logger;
         private readonly IMonitoringResultRepository _monitoringResultRepository;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IMonitoringRequest<PingReply> _pingMonitoringRequest;
-        
+
         public PingMonitoringProcess(
+            ILogger<PingMonitoringProcess> logger,
             IMonitoringResultRepository monitoringResultRepository,
             IDateTimeProvider dateTimeProvider,
             IMonitoringRequest<PingReply> pingMonitoringRequest)
         {
+            _logger = logger;
             _monitoringResultRepository = monitoringResultRepository;
             _dateTimeProvider = dateTimeProvider;
             _pingMonitoringRequest = pingMonitoringRequest;
         }
-        
-        public void Start(MonitoringEntity entity)
-        {
-            PingReply reply = null;
-            try
-            {
-                reply = _pingMonitoringRequest.Send(entity);
-            }
-            catch (PingException)
-            {
-                // todo logging    
-            }
 
+        public async Task StartAsync(MonitoringEntity entity)
+        {
             var result = new MonitoringResult
             {
                 CreatedDate = _dateTimeProvider.Now,
                 MonitoringEntityId = entity.Id
             };
-            result.SetData(new PingMonitoringResultData {IPStatus = reply?.Status ?? IPStatus.Unknown});
+            result.SetData(new PingMonitoringResultData(await GetIpStatus(entity)));
 
-            _monitoringResultRepository.Create(result);
+            await _monitoringResultRepository.CreateAsync(result);
+        }
+
+        private async Task<IPStatus> GetIpStatus(MonitoringEntity entity)
+        {
+            try
+            {
+                var reply = await _pingMonitoringRequest.SendAsync(entity);
+                return reply.Status;
+            }
+            catch (PingException e)
+            {
+                _logger.LogWarning(e, $"Unable to retrieve ip status for '{entity.Address}'");
+                return IPStatus.Unknown;
+            }
         }
     }
 }

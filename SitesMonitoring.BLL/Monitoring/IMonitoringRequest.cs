@@ -1,7 +1,9 @@
+using System.Threading.Tasks;
+
 namespace SitesMonitoring.BLL.Monitoring
 {
     public interface IMonitoringRequest<TResult>
     {
-        TResult Send(MonitoringEntity entity);
+        Task<TResult> SendAsync(MonitoringEntity entity);
     }
 }

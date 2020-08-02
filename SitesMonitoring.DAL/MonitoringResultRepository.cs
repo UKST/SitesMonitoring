@@ -1,4 +1,6 @@
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using SitesMonitoring.BLL.Monitoring;
 
 namespace SitesMonitoring.DAL
@@ -9,11 +11,11 @@ namespace SitesMonitoring.DAL
         {
         }
 
-        public MonitoringResult GetLast(long monitoringEntityId)
+        public async Task<MonitoringResult> GetLastAsync(long monitoringEntityId)
         {
-            return Db.MonitoringResults
+            return await Db.MonitoringResults
                 .OrderByDescending(i => i.Id)
-                .FirstOrDefault(i => i.MonitoringEntityId == monitoringEntityId);
+                .FirstOrDefaultAsync(i => i.MonitoringEntityId == monitoringEntityId);
         }
     }
 }

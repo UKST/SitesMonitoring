@@ -21,14 +21,19 @@ namespace SitesMonitoring.BLL.Monitoring.StatisticAPI
             _siteHealthCalculationStrategy = siteHealthCalculationStrategy;
         }
 
-        public Task<ICollection<SiteStatistic>> Handle(GetStatisticsQuery request, CancellationToken cancellationToken)
+        public async Task<ICollection<SiteStatistic>> Handle(GetStatisticsQuery request, CancellationToken cancellationToken)
         {
             // todo add paging
-            var sites = _siteRepository.GetAll();
+            var sites = await _siteRepository.GetAllAsync();
 
-            return Task.FromResult<ICollection<SiteStatistic>>(sites.Select(i =>
-                    new SiteStatistic {SiteName = i.Name, SiteHealth = _siteHealthCalculationStrategy.GetHealth(i)})
-                .ToArray());
+            var statistic = new List<SiteStatistic>();
+            foreach (var site in sites)
+            {
+                var health = await _siteHealthCalculationStrategy.GetHealthAsync(site);
+                statistic.Add(new SiteStatistic {SiteName = site.Name, SiteHealth = health});
+            }
+
+            return statistic;
         }
     }
 }

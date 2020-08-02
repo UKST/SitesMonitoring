@@ -18,16 +18,16 @@ namespace SitesMonitoring.BLL.Monitoring.PingMonitoringAPI.Remove
             _validator = validator;
         }
 
-        public Task<Unit> Handle(RemoveMonitoringEntityCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(RemoveMonitoringEntityCommand request, CancellationToken cancellationToken)
         {
-            _validator.ValidateSiteExistence(request.SiteId);
+            await _validator.ValidateSiteExistenceAsync(request.SiteId);
 
-            var entity = _monitoringEntityRepository.GetById(request.Id);
+            var entity = await _monitoringEntityRepository.GetByIdAsync(request.Id);
             if (entity == null) throw new NotFoundException();
 
-            _monitoringEntityRepository.Remove(entity);
+            await _monitoringEntityRepository.RemoveAsync(entity);
 
-            return Task.FromResult(new Unit());
+            return new Unit();
         }
     }
 }
