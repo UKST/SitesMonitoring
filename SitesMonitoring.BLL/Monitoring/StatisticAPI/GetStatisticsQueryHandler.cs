@@ -24,7 +24,7 @@ namespace SitesMonitoring.BLL.Monitoring.StatisticAPI
         public async Task<ICollection<SiteStatistic>> Handle(GetStatisticsQuery request, CancellationToken cancellationToken)
         {
             // todo add paging
-            var sites = await _siteRepository.GetAllAsync();
+            var sites = await _siteRepository.GetManyAsync(new EmptyFilterSpecification<Site>());
 
             var statistic = new List<SiteStatistic>();
             foreach (var site in sites)

@@ -1,17 +1,18 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using SitesMonitoring.BLL.Data;
 using SitesMonitoring.BLL.ErrorHandling;
 
 namespace SitesMonitoring.BLL.Monitoring.PingMonitoringAPI.Remove
 {
     public class RemoveMonitoringEntityCommandHandler : IRequestHandler<RemoveMonitoringEntityCommand>
     {
-        private readonly IMonitoringEntityRepository _monitoringEntityRepository;
+        private readonly IRepository<MonitoringEntity> _monitoringEntityRepository;
         private readonly IMonitoringValidator _validator;
 
         public RemoveMonitoringEntityCommandHandler(
-            IMonitoringEntityRepository monitoringEntityRepository,
+            IRepository<MonitoringEntity> monitoringEntityRepository,
             IMonitoringValidator validator)
         {
             _monitoringEntityRepository = monitoringEntityRepository;
@@ -22,10 +23,11 @@ namespace SitesMonitoring.BLL.Monitoring.PingMonitoringAPI.Remove
         {
             await _validator.ValidateSiteExistenceAsync(request.SiteId);
 
-            var entity = await _monitoringEntityRepository.GetByIdAsync(request.Id);
+            var entity = await _monitoringEntityRepository.GetFirstOrDefaultAsync(new GetByIdSpecification<MonitoringEntity>(request.Id));
             if (entity == null) throw new NotFoundException();
 
-            await _monitoringEntityRepository.RemoveAsync(entity);
+            _monitoringEntityRepository.Remove(entity);
+            await _monitoringEntityRepository.SaveChangesAsync();
 
             return new Unit();
         }

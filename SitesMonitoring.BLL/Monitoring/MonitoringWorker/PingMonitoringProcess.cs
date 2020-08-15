@@ -1,6 +1,7 @@
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using SitesMonitoring.BLL.Data;
 using SitesMonitoring.BLL.Monitoring.PingMonitoringAPI;
 using SitesMonitoring.BLL.Utils;
 
@@ -9,13 +10,13 @@ namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
     public class PingMonitoringProcess : IMonitoringProcess
     {
         private readonly ILogger<PingMonitoringProcess> _logger;
-        private readonly IMonitoringResultRepository _monitoringResultRepository;
+        private readonly IRepository<MonitoringResult> _monitoringResultRepository;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IMonitoringRequest<PingReply> _pingMonitoringRequest;
 
         public PingMonitoringProcess(
             ILogger<PingMonitoringProcess> logger,
-            IMonitoringResultRepository monitoringResultRepository,
+            IRepository<MonitoringResult> monitoringResultRepository,
             IDateTimeProvider dateTimeProvider,
             IMonitoringRequest<PingReply> pingMonitoringRequest)
         {
@@ -34,7 +35,8 @@ namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
             };
             result.SetData(new PingMonitoringResultData(await GetIpStatus(entity)));
 
-            await _monitoringResultRepository.CreateAsync(result);
+            _monitoringResultRepository.Create(result);
+            await _monitoringResultRepository.SaveChangesAsync();
         }
 
         private async Task<IPStatus> GetIpStatus(MonitoringEntity entity)

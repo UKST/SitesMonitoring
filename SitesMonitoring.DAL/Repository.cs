@@ -8,7 +8,6 @@ namespace SitesMonitoring.DAL
 {
     public class Repository<T> : IRepository<T> where T : EntityBase
     {
-        // todo - add async support
         protected SitesMonitoringDbContext Db { get; }
 
         public Repository(SitesMonitoringDbContext db)
@@ -16,26 +15,45 @@ namespace SitesMonitoring.DAL
             Db = db;
         }
 
-        public async Task<T> GetByIdAsync(long id)
+        public async Task<T> GetFirstOrDefaultAsync(ISpecification<T> specification)
         {
-            return await Db.Set<T>().FindAsync(id);
+            return await ApplySpecification(specification)
+                .FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync()
+        public async Task<IEnumerable<T>> GetManyAsync(ISpecification<T> specification)
         {
-            return await Db.Set<T>().ToArrayAsync();
+            return await ApplySpecification(specification)
+                .ToArrayAsync();
         }
 
-        public async Task CreateAsync(T item)
+        public void Create(T item)
         {
-            await Db.Set<T>().AddAsync(item);
-            await Db.SaveChangesAsync(); // todo - move to UoW
+            Db.Set<T>().AddAsync(item);
         }
 
-        public async Task RemoveAsync(T item)
+        public void Remove(T item)
         {
             Db.Set<T>().Remove(item);
-            await Db.SaveChangesAsync(); // todo - move to UoW
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            await Db.SaveChangesAsync();
+        }
+
+        private IQueryable<T> ApplySpecification(ISpecification<T> specification)
+        {
+            var queryableResultWithIncludes = specification.Includes
+                .Aggregate(Db.Set<T>().AsQueryable(),
+                    (current, include) => current.Include(include));
+
+            var secondaryResult = specification.IncludeStrings
+                .Aggregate(queryableResultWithIncludes,
+                    (current, include) => current.Include(include));
+
+            return secondaryResult
+                .Where(specification.Criteria);
         }
     }
 }

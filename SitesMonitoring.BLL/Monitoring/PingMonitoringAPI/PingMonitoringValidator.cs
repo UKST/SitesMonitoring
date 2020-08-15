@@ -44,7 +44,7 @@ namespace SitesMonitoring.BLL.Monitoring.PingMonitoringAPI
 
         public async Task ValidateSiteExistenceAsync(long siteId)
         {
-            var site = await _siteRepository.GetByIdAsync(siteId);
+            var site = await _siteRepository.GetFirstOrDefaultAsync(new GetByIdSpecification<Site>(siteId));
 
             if (site == null)
                 throw new NotFoundException();

@@ -16,7 +16,8 @@ namespace SitesMonitoring.BLL.Monitoring.SitesAPI
 
         public async Task<Site> Handle(CreateSiteCommand request, CancellationToken cancellationToken)
         {
-            await _siteRepository.CreateAsync(request.Site);
+            _siteRepository.Create(request.Site);
+            await _siteRepository.SaveChangesAsync();
 
             return request.Site;
         }

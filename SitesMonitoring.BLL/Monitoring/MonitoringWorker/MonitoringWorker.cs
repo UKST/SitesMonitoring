@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using SitesMonitoring.BLL.Data;
 
 namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
 {
@@ -11,7 +12,7 @@ namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
     {
         private readonly ILogger<MonitoringWorker> _logger;
         private readonly IEnumerable<Lazy<IMonitoringProcess, MonitoringProcessMetadata>> _monitoringProcesses;
-        private readonly IMonitoringEntityRepository _monitoringEntityRepository;
+        private readonly IRepository<MonitoringEntity> _monitoringEntityRepository;
         private readonly IMonitoringSettings _monitoringSettings;
         private readonly IMonitoringPeriodsProvider _monitoringPeriodsProvider;
 
@@ -20,7 +21,7 @@ namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
         public MonitoringWorker(
             ILogger<MonitoringWorker> logger,
             IEnumerable<Lazy<IMonitoringProcess, MonitoringProcessMetadata>> monitoringProcesses,
-            IMonitoringEntityRepository monitoringEntityRepository,
+            IRepository<MonitoringEntity> monitoringEntityRepository,
             IMonitoringSettings monitoringSettings,
             IMonitoringPeriodsProvider monitoringPeriodsProvider)
         {
@@ -53,7 +54,8 @@ namespace SitesMonitoring.BLL.Monitoring.MonitoringWorker
             try
             {
                 var periods = _monitoringPeriodsProvider.GetPeriodsOfMonitoringInMinutes();
-                var monitorEntries = await _monitoringEntityRepository.GetByMonitoringPeriodsAsync(periods);
+                var monitorEntries = await _monitoringEntityRepository.GetManyAsync(
+                    new Specification<MonitoringEntity>(i => periods.Contains(i.PeriodInMinutes)));
                 var sitesMonitors = monitorEntries.GroupBy(i => i.SiteId);
 
                 foreach (var siteMonitors in sitesMonitors)

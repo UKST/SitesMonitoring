@@ -48,6 +48,7 @@ namespace SitesMonitoring.API.Composition
             builder.RegisterType<CreatePingMonitoringEntityCommandHandler>().AsImplementedInterfaces().InstancePerDependency();
             builder.RegisterType<GetPingMonitoringEntitiesQueryHandler>().AsImplementedInterfaces().InstancePerDependency();
             builder.RegisterType<GetStatisticsQueryHandler>().AsImplementedInterfaces().InstancePerDependency();
+            builder.RegisterType<GetMonitoringEntitiesLastResultsQueryHandler>().AsImplementedInterfaces().InstancePerDependency();
         }
 
         private static void RegisterServices(ContainerBuilder builder)
@@ -77,11 +78,9 @@ namespace SitesMonitoring.API.Composition
 
         private static void RegisterRepositories(ContainerBuilder builder)
         {
-            builder.RegisterType<MonitoringEntityRepository>().As<IMonitoringEntityRepository>()
-                .InstancePerLifetimeScope();
-            builder.RegisterType<MonitoringResultRepository>().As<IMonitoringResultRepository>()
-                .InstancePerLifetimeScope();
             builder.RegisterType<Repository<Site>>().As<IRepository<Site>>().InstancePerLifetimeScope();
+            builder.RegisterType<Repository<MonitoringEntity>>().As<IRepository<MonitoringEntity>>().InstancePerLifetimeScope();
+            builder.RegisterType<Repository<MonitoringResult>>().As<IRepository<MonitoringResult>>().InstancePerLifetimeScope();
         }
     }
 }

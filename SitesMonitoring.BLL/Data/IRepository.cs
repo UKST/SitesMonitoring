@@ -3,11 +3,12 @@ using System.Threading.Tasks;
 
 namespace SitesMonitoring.BLL.Data
 {
-    public interface IRepository<T> where T : EntityBase
+    public interface IRepository<T>
     {
-        Task<T> GetByIdAsync(long id);
-        Task<IEnumerable<T>> GetAllAsync();
-        Task CreateAsync(T item);
-        Task RemoveAsync(T item);
+        Task<T> GetFirstOrDefaultAsync(ISpecification<T> specification);
+        Task<IEnumerable<T>> GetManyAsync(ISpecification<T> specification);
+        void Create(T item);
+        void Remove(T item);
+        Task SaveChangesAsync();
     }
 }
