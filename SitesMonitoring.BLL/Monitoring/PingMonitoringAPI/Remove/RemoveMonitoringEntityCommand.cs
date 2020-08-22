@@ -2,7 +2,7 @@ using MediatR;
 
 namespace SitesMonitoring.BLL.Monitoring.PingMonitoringAPI.Remove
 {
-    public class RemoveMonitoringEntityCommand : IRequest
+    public class RemoveMonitoringEntityCommand : IRequest, ISiteId
     {
         public long SiteId { get; }
 

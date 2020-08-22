@@ -3,9 +3,9 @@ using Newtonsoft.Json;
 
 namespace SitesMonitoring.API.Models
 {
-    public sealed class GenericErrorsResultModel
+    public class PropertyErrorsResultModel
     {
         [JsonProperty(PropertyName = "errors")]
-        public ICollection<string> Errors { get; set; }
+        public IDictionary<string, IEnumerable<string>> PropertyErrors { get; set; }
     }
 }

@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using SitesMonitoring.BLL.Data;
+using SitesMonitoring.BLL.Monitoring.PingMonitoringAPI;
 using SitesMonitoring.BLL.Monitoring.SitesAPI;
 
 namespace SitesMonitoring.BLL.Monitoring
 {
-    public class MonitoringEntity : EntityBase
+    public class MonitoringEntity : EntityBase, ISiteId
     {
         public MonitoringType Type { get; set; }
         public int PeriodInMinutes { get; set; }
@@ -12,7 +13,7 @@ namespace SitesMonitoring.BLL.Monitoring
         public long SiteId { get; set; }
 
         public Site Site { get; set; }
-        
+
         public ICollection<MonitoringResult> MonitoringResults { get; set; }
     }
 }

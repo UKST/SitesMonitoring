@@ -38,7 +38,7 @@ namespace SitesMonitoring.API.IntegrationTests
         }
 
         [Fact]
-        public async Task ShouldReturnNotFoundResponse_WhenGetRequestForNotExistingSite()
+        public async Task ShouldReturnBadRequestResponse_WhenGetRequestForNotExistingSite()
         {
             // Arrange
             var client = _webApplicationFactory.CreateClient();
@@ -47,7 +47,7 @@ namespace SitesMonitoring.API.IntegrationTests
             var response = await client.GetAsync(EndpointUrl(1));
 
             // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
         [Fact]

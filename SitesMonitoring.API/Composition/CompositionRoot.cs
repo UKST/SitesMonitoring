@@ -1,5 +1,6 @@
 using System.Net.NetworkInformation;
 using Autofac;
+using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Hosting;
 using SitesMonitoring.API.HostedServices;
@@ -22,6 +23,8 @@ namespace SitesMonitoring.API.Composition
         protected override void Load(ContainerBuilder builder)
         {
             ReqisterCQRS(builder);
+
+            RegisterValidators(builder);
 
             RegisterServices(builder);
 
@@ -49,6 +52,21 @@ namespace SitesMonitoring.API.Composition
             builder.RegisterType<GetPingMonitoringEntitiesQueryHandler>().AsImplementedInterfaces().InstancePerDependency();
             builder.RegisterType<GetStatisticsQueryHandler>().AsImplementedInterfaces().InstancePerDependency();
             builder.RegisterType<GetMonitoringEntitiesLastResultsQueryHandler>().AsImplementedInterfaces().InstancePerDependency();
+
+            builder.RegisterGeneric(typeof(ValidatorBehavior<,>)).
+                As(typeof(IPipelineBehavior<,>));
+        }
+
+        private static void RegisterValidators(ContainerBuilder builder)
+        {
+            builder.RegisterType<SiteExistValidator<ISiteId>>()
+                .As<IValidator<ISiteId>>().InstancePerLifetimeScope();
+            builder.RegisterType<SiteExistValidator<GetPingMonitoringEntitiesQuery>>()
+                .As<IValidator<GetPingMonitoringEntitiesQuery>>().InstancePerLifetimeScope();
+            builder.RegisterType<SiteExistValidator<RemoveMonitoringEntityCommand>>()
+                .As<IValidator<RemoveMonitoringEntityCommand>>().InstancePerLifetimeScope();
+            builder.RegisterType<CreatePingMonitoringEntityCommandValidator>()
+                .As<IValidator<CreatePingMonitoringEntityCommand>>().InstancePerLifetimeScope();
         }
 
         private static void RegisterServices(ContainerBuilder builder)
@@ -71,8 +89,6 @@ namespace SitesMonitoring.API.Composition
             // replace with metadata or keyed service approach if statistic based on different monitors will be required
             builder.RegisterType<PingHealthStatusMapper>().As<IHealthStatusMapper>().InstancePerLifetimeScope();
             builder.RegisterType<LastPingSiteHealthCalculationStrategy>().As<ISiteHealthCalculationStrategy>()
-                .InstancePerLifetimeScope();
-            builder.RegisterType<PingMonitoringValidator>().As<IMonitoringValidator>()
                 .InstancePerLifetimeScope();
         }
 

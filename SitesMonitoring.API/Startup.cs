@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
 using AutoMapper;
+using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
@@ -17,7 +20,6 @@ using SitesMonitoring.API.HostedServices;
 using SitesMonitoring.API.Mapping;
 using SitesMonitoring.API.Models;
 using SitesMonitoring.BLL.Configs;
-using SitesMonitoring.BLL.ErrorHandling;
 using SitesMonitoring.DAL;
 
 namespace SitesMonitoring.API
@@ -128,31 +130,43 @@ namespace SitesMonitoring.API
 
             switch (exception)
             {
-                case ApplicationValidationException _:
-                    await CreateErrorResult(context, exception.Message, 400);
-                    break;
-                case NotFoundException _:
-                    CreateErrorResult(context, 404);
+                case ValidationException validationException:
+                    await CreateErrorResult(
+                        context,
+                        400,
+                        validationException);
                     break;
                 default:
-                    await CreateErrorResult(context, "Internal server error", 500);
+                    await CreateErrorResult(context, 500, "Internal server error");
                     break;
             }
         }
 
-        private static async Task CreateErrorResult(HttpContext context, string errorMessage, int statusCode)
+        private static async Task CreateErrorResult(HttpContext context, int statusCode, ValidationException exception)
         {
             context.Response.StatusCode = statusCode;
 
             var result = JsonConvert.SerializeObject(
-                new GenericErrorsResultModel {Errors = new[] {errorMessage}});
+                new PropertyErrorsResultModel
+                {
+                    PropertyErrors = exception.Errors
+                        .GroupBy(i => i.PropertyName)
+                        .ToDictionary(
+                            k => k.Key,
+                            v => v.Select(i => i.ErrorMessage))
+                });
 
             await context.Response.WriteAsync(result);
         }
 
-        private static void CreateErrorResult(HttpContext context, int statusCode)
+        private static async Task CreateErrorResult(HttpContext context, int statusCode, params string[] errorMessages)
         {
             context.Response.StatusCode = statusCode;
+
+            var result = JsonConvert.SerializeObject(
+                new GenericErrorsResultModel {Errors = errorMessages});
+
+            await context.Response.WriteAsync(result);
         }
     }
 }

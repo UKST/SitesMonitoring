@@ -8,11 +8,11 @@ namespace SitesMonitoring.DAL
 {
     public class Repository<T> : IRepository<T> where T : EntityBase
     {
-        protected SitesMonitoringDbContext Db { get; }
+        private readonly SitesMonitoringDbContext _db;
 
         public Repository(SitesMonitoringDbContext db)
         {
-            Db = db;
+            _db = db;
         }
 
         public async Task<T> GetFirstOrDefaultAsync(ISpecification<T> specification)
@@ -29,23 +29,23 @@ namespace SitesMonitoring.DAL
 
         public void Create(T item)
         {
-            Db.Set<T>().AddAsync(item);
+            _db.Set<T>().AddAsync(item);
         }
 
         public void Remove(T item)
         {
-            Db.Set<T>().Remove(item);
+            _db.Set<T>().Remove(item);
         }
 
         public async Task SaveChangesAsync()
         {
-            await Db.SaveChangesAsync();
+            await _db.SaveChangesAsync();
         }
 
         private IQueryable<T> ApplySpecification(ISpecification<T> specification)
         {
             var queryableResultWithIncludes = specification.Includes
-                .Aggregate(Db.Set<T>().AsQueryable(),
+                .Aggregate(_db.Set<T>().AsQueryable(),
                     (current, include) => current.Include(include));
 
             var secondaryResult = specification.IncludeStrings
